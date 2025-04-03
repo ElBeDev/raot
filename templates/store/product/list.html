@@ -1,81 +1,152 @@
-{% extends "base/base.html" %}
+{% extends 'base/base.html' %}
 {% load static %}
+
+{% block title %}Productos | RAOT Suplementos{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/product.css' %}">
 {% endblock %}
 
-{% block title %}Products | RAOT Supplements{% endblock %}
-
-{% block content %}
-<div class="row g-4">
-    <div class="col-md-3 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0 fw-bold">Categories</h4>
-            </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item ps-0">
-                        <a href="{% url 'store:product_list' %}" class="text-decoration-none {% if not category %}text-raot-primary fw-bold{% else %}text-dark{% endif %}">
-                            All Products
-                        </a>
-                    </li>
-                    {% for c in categories %}
-                    <li class="list-group-item ps-0">
-                        <a href="{{ c.get_absolute_url }}" class="text-decoration-none {% if category.slug == c.slug %}text-raot-primary fw-bold{% else %}text-dark{% endif %}">
-                            {{ c.name }}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
+{% block hero %}
+<section class="hero-section category-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>{% if category %}{{ category.name }}{% else %}Todos los Productos{% endif %}</h1>
+            <p>Descubre nuestra selección de {% if category %}{{ category.name|lower }}{% else %}suplementos de alta calidad{% endif %}</p>
         </div>
     </div>
-    
-    <div class="col-md-9">
-        <h2 class="mb-4 fw-bold">{% if category %}{{ category.name }}{% else %}All Products{% endif %}</h2>
-        
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for product in products %}
-            <div class="col">
-                <div class="card product-card">
-                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                        {% else %}
-                        <div class="bg-light-section text-center py-5">No Image</div>
-                        {% endif %}
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
-                                {{ product.name }}
-                            </a>
-                        </h5>
-                        <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="price-tag">${{ product.price }}</span>
-                            <form action="{% url 'cart:cart_add' product.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="quantity" value="1">
-                                <input type="hidden" name="override" value="False">
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="fa fa-shopping-cart me-1"></i> Add
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info">No products found.</div>
-            </div>
-            {% endfor %}
+</section>
+{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-filter"></i> Filtros
+    </button>
+    <div class="sidebar-content" id="sidebarContent">
+        {% include 'partials/category_nav.html' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="product-filter-bar">
+    <div class="results-count">
+        {{ products.count }} productos encontrados
+    </div>
+    <div class="product-filter-actions">
+        <div class="sort-dropdown">
+            <form id="sortForm" method="get" action="">
+                {% for key, value in request.GET.items %}
+                    {% if key != 'sort' and key != 'page' %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                    {% endif %}
+                {% endfor %}
+                <select name="sort" id="sortSelect" onchange="document.getElementById('sortForm').submit()">
+                    <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Nombre (A-Z)</option>
+                    <option value="-name" {% if request.GET.sort == '-name' %}selected{% endif %}>Nombre (Z-A)</option>
+                    <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Precio (menor a mayor)</option>
+                    <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>Precio (mayor a menor)</option>
+                    <option value="-created" {% if request.GET.sort == '-created' %}selected{% endif %}>Más recientes</option>
+                </select>
+            </form>
+        </div>
+        <div class="view-options">
+            <button class="view-option active" id="gridView" title="Vista de cuadrícula">
+                <i class="fas fa-th-large"></i>
+            </button>
+            <button class="view-option" id="listView" title="Vista de lista">
+                <i class="fas fa-list"></i>
+            </button>
         </div>
     </div>
 </div>
+
+<div class="product-grid" id="productContainer">
+    {% for product in products %}
+    <div class="card">
+        {% if product.discount > 0 %}
+        <div class="discount-badge">-{{ product.discount }}%</div>
+        {% endif %}
+        
+        <a href="{% url 'store:product_detail' product.id %}">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+            {% else %}
+            <img src="{% static 'images/product-placeholder.jpg' %}" alt="{{ product.name }}" class="card-img">
+            {% endif %}
+        </a>
+        
+        <div class="card-body">
+            <h3 class="card-title">
+                <a href="{% url 'store:product_detail' product.id %}">{{ product.name }}</a>
+            </h3>
+            
+            <div class="card-price">
+                {% if product.discount > 0 %}
+                <span class="original-price">${{ product.original_price }} MXN</span>
+                {% endif %}
+                ${{ product.price }} MXN
+            </div>
+            
+            <form action="{% url 'cart:add' product.id %}" method="post" class="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="override" value="False">
+                <button type="submit" class="btn btn-primary btn-block">Agregar al Carrito</button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div class="no-products">
+        <p>No se encontraron productos que coincidan con los criterios de búsqueda.</p>
+        <a href="{% url 'store:product_list' %}" class="btn btn-primary">Ver todos los productos</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">
+        <i class="fas fa-chevron-left"></i> Anterior
+    </a>
+    {% endif %}
+    
+    <span class="pagination-current">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">
+        Siguiente <i class="fas fa-chevron-right"></i>
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle mobile sidebar
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+        document.getElementById('sidebarContent').classList.toggle('active');
+        if (this.innerHTML.includes('Filtros')) {
+            this.innerHTML = '<i class="fas fa-times"></i> Cerrar';
+        } else {
+            this.innerHTML = '<i class="fas fa-filter"></i> Filtros';
+        }
+    });
+
+    // Grid/List view toggle
+    document.getElementById('gridView').addEventListener('click', function() {
+        document.getElementById('productContainer').classList.remove('product-list-view');
+        this.classList.add('active');
+        document.getElementById('listView').classList.remove('active');
+    });
+    
+    document.getElementById('listView').addEventListener('click', function() {
+        document.getElementById('productContainer').classList.add('product-list-view');
+        this.classList.add('active');
+        document.getElementById('gridView').classList.remove('active');
+    });
+</script>
 {% endblock %}

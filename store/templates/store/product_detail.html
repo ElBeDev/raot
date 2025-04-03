@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - RAOT Suplementos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section product-detail-section">
+    <div class="container">
+        <div class="product-detail">
+            <div class="product-image-container">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" class="product-image">
+                {% endif %}
+            </div>
+            
+            <div class="product-info">
+                <h1 class="product-title">{{ product.name }}</h1>
+                <div class="product-price">${{ product.price }} MXN</div>
+                
+                <div class="product-description">
+                    <p>{{ product.description|linebreaks }}</p>
+                </div>
+                
+                <form method="post" action="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <div class="quantity-input">
+                        <label for="quantity">Cantidad:</label>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" class="quantity-selector">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar al Carrito</button>
+                </form>
+                
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Categoría:</span>
+                        <span class="meta-value">{{ product.category.name }}</span>
+                    </div>
+                    {% if product.stock_status %}
+                    <div class="meta-item">
+                        <span class="meta-label">Disponibilidad:</span>
+                        <span class="meta-value in-stock">En Stock</span>
+                    </div>
+                    {% else %}
+                    <div class="meta-item">
+                        <span class="meta-label">Disponibilidad:</span>
+                        <span class="meta-value out-of-stock">Agotado</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section related-products-section">
+    <div class="container">
+        <h2 class="section-title">Productos Relacionados</h2>
+        <div class="product-grid">
+            {% for product in related_products %}
+            <div class="card">
+                <a href="{% url 'store:product_detail' product.id %}">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+                    {% else %}
+                    <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" class="card-img">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title">{{ product.name }}</h3>
+                        <div class="card-price">${{ product.price }} MXN</div>
+                        <a href="{% url 'store:product_detail' product.id %}" class="btn btn-primary">Ver Detalles</a>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

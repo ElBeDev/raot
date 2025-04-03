@@ -1,92 +1,150 @@
-{% extends "base/base.html" %}
+{% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}RAOT Supplements - Premium Health & Fitness Supplements{% endblock %}
+{% block title %}RAOT Suplementos - Los mejores suplementos deportivos{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 
+{% block hero %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Potencia tu Rendimiento</h1>
+            <p>Suplementos de máxima calidad para alcanzar tus objetivos fitness</p>
+            <a href="{% url 'store:product_list' %}" class="hero-cta">Descubre Nuestros Productos</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <!-- Left Side Category Menu -->
-    <div class="col-md-3 mb-4">
-        <div class="category-menu">
-            <h3 class="category-menu-title">Categories</h3>
-            
-            <a href="{% url 'store:product_list' %}" class="category-item {% if not category %}active{% endif %}">
-                <div class="category-icon">
-                    <i class="fas fa-th-large"></i>
-                </div>
-                All Products
-            </a>
-            
-            {% for c in categories %}
-            <a href="{{ c.get_absolute_url }}" class="category-item {% if category.slug == c.slug %}active{% endif %}">
-                <div class="category-icon">
-                    {% if c.name == 'Protein' %}
-                    <i class="fas fa-dumbbell"></i>
-                    {% elif c.name == 'Pre-Workout' %}
-                    <i class="fas fa-bolt"></i>
-                    {% elif c.name == 'Vitamins' %}
-                    <i class="fas fa-pills"></i>
-                    {% else %}
-                    <i class="fas fa-flask"></i>
-                    {% endif %}
-                </div>
-                {{ c.name }}
-            </a>
-            {% endfor %}
-        </div>
-    </div>
-    
-    <!-- Right Side Product Display -->
-    <div class="col-md-9">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0 fw-bold">Featured Products</h2>
-            <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary btn-sm">View All</a>
-        </div>
+<!-- Featured Products -->
+<h2 class="section-title">Productos Destacados</h2>
+
+<div class="product-grid">
+    {% for product in featured_products %}
+    <div class="card">
+        {% if product.discount > 0 %}
+        <div class="discount-badge">-{{ product.discount }}%</div>
+        {% endif %}
         
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-            {% for product in products %}
-            <div class="col">
-                <div class="card product-card">
-                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                        {% else %}
-                        <div class="bg-light-section text-center py-5">No Image</div>
-                        {% endif %}
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
-                                {{ product.name }}
-                            </a>
-                        </h5>
-                        <p class="card-text">{{ product.description|truncatewords:10 }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="price-tag">${{ product.price }}</span>
-                            <form action="{% url 'cart:cart_add' product.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="quantity" value="1">
-                                <input type="hidden" name="override" value="False">
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="fa fa-shopping-cart me-1"></i> Add
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+        <a href="{% url 'store:product_detail' product.id %}">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+            {% else %}
+            <img src="{% static 'images/product-placeholder.jpg' %}" alt="{{ product.name }}" class="card-img">
+            {% endif %}
+        </a>
+        
+        <div class="card-body">
+            <h3 class="card-title">
+                <a href="{% url 'store:product_detail' product.id %}">{{ product.name }}</a>
+            </h3>
+            
+            <div class="card-price">
+                {% if product.discount > 0 %}
+                <span class="original-price">${{ product.original_price }} MXN</span>
+                {% endif %}
+                ${{ product.price }} MXN
             </div>
-            {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info">No products found.</div>
-            </div>
-            {% endfor %}
+            
+            <form action="{% url 'cart:add' product.id %}" method="post" class="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="override" value="False">
+                <button type="submit" class="btn btn-primary btn-block">Agregar al Carrito</button>
+            </form>
         </div>
     </div>
+    {% empty %}
+    <p>No hay productos destacados disponibles.</p>
+    {% endfor %}
 </div>
+
+<!-- New Arrivals Section -->
+<h2 class="section-title">Recién Llegados</h2>
+
+<div class="product-grid">
+    {% for product in new_products %}
+    <div class="card">
+        {% if product.discount > 0 %}
+        <div class="discount-badge">-{{ product.discount }}%</div>
+        {% endif %}
+        
+        <a href="{% url 'store:product_detail' product.id %}">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+            {% else %}
+            <img src="{% static 'images/product-placeholder.jpg' %}" alt="{{ product.name }}" class="card-img">
+            {% endif %}
+        </a>
+        
+        <div class="card-body">
+            <h3 class="card-title">
+                <a href="{% url 'store:product_detail' product.id %}">{{ product.name }}</a>
+            </h3>
+            
+            <div class="card-price">
+                {% if product.discount > 0 %}
+                <span class="original-price">${{ product.original_price }} MXN</span>
+                {% endif %}
+                ${{ product.price }} MXN
+            </div>
+            
+            <form action="{% url 'cart:add' product.id %}" method="post" class="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="override" value="False">
+                <button type="submit" class="btn btn-primary btn-block">Agregar al Carrito</button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <p>No hay nuevos productos disponibles.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block content_full %}
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">¿Por qué elegir RAOT?</h2>
+        
+        <div class="features-grid">
+            <div class="feature">
+                <i class="fas fa-shipping-fast"></i>
+                <h3>Envío Express</h3>
+                <p>Entrega rápida a todo México</p>
+            </div>
+            
+            <div class="feature">
+                <i class="fas fa-medal"></i>
+                <h3>Calidad Premium</h3>
+                <p>Ingredientes de la más alta calidad</p>
+            </div>
+            
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <h3>Compra Segura</h3>
+                <p>Protección en todas tus transacciones</p>
+            </div>
+            
+            <div class="feature">
+                <i class="fas fa-headset"></i>
+                <h3>Soporte 24/7</h3>
+                <p>Atención personalizada para resolver tus dudas</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Any additional JavaScript for the homepage
+</script>
 {% endblock %}

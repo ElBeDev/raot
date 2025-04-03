@@ -1,0 +1,135 @@
+Setting Up Automated Deployment
+To automatically update your server when you push to GitHub, you can set up a simple deployment script. Here's how:
+
+1. Create a deployment script on your server
+
+# SSH into your server
+ssh user@69.62.95.109
+
+# Navigate to your project directory
+cd /home/raotsuplementos/htdocs/raotsuplementos.com.mx/
+
+# Create the deployment script
+nano deploy.sh
+
+Add this content to the script:
+
+#!/bin/bash
+# filepath: /home/raotsuplementos/htdocs/raotsuplementos.com.mx/deploy.sh
+
+cd /home/raotsuplementos/htdocs/raotsuplementos.com.mx/
+git pull origin main
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py collectstatic --noinput
+
+# Restart Gunicorn to apply changes
+# If using systemd:
+sudo systemctl restart gunicorn
+# OR if using tmux:
+tmux send-keys -t raot C-c
+tmux send-keys -t raot "cd /home/raotsuplementos/htdocs/raotsuplementos.com.mx/ && source venv/bin/activate && gunicorn raotproject.wsgi:application --bind 127.0.0.1:8090" Enter
+
+Make the script executable:
+chmod +x deploy.sh
+
+
+2. Set up a GitHub webhook (Option 1)
+This approach uses GitHub webhooks to trigger the deployment script when you push to your repository:
+
+Install required packages on your server:
+sudo apt update
+sudo apt install python3-pip
+pip3 install flask
+
+Create a webhook listener script:
+nano webhook.py
+
+Add this content:
+from flask import Flask, request
+import subprocess
+import hmac
+import hashlib
+import os
+
+app = Flask(__name__)
+
+# Set your secret token (generate a secure random string)
+SECRET_TOKEN = "your_secret_token"  # Change this to a secure value
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    # Verify GitHub signature
+    signature = request.headers.get('X-Hub-Signature-256')
+    if not signature:
+        return 'No signature', 400
+    
+    # Calculate expected signature
+    payload = request.data
+    expected_signature = 'sha256=' + hmac.new(
+        bytes(SECRET_TOKEN, 'utf-8'),
+        payload,
+        hashlib.sha256
+    ).hexdigest()
+    
+    if not hmac.compare_digest(signature, expected_signature):
+        return 'Invalid signature', 403
+    
+    # Run deployment script
+    try:
+        subprocess.run(['/home/raotsuplementos/htdocs/raotsuplementos.com.mx/deploy.sh'], check=True)
+        return 'Deployment triggered', 200
+    except subprocess.CalledProcessError:
+        return 'Deployment failed', 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+
+
+Create a systemd service to run the webhook listener:
+sudo nano /etc/systemd/system/webhook.service
+
+
+Add this content:
+[Unit]
+Description=GitHub Webhook Listener
+After=network.target
+
+[Service]
+User=raotsuplementos
+WorkingDirectory=/home/raotsuplementos/htdocs/raotsuplementos.com.mx
+ExecStart=/home/raotsuplementos/htdocs/raotsuplementos.com.mx/venv/bin/python /home/raotsuplementos/htdocs/raotsuplementos.com.mx/webhook.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
+Enable and start the service:
+sudo systemctl enable webhook
+sudo systemctl start webhook
+
+
+Configure Nginx to proxy webhook requests:
+sudo nano /home/clp/services/nginx/sites-enabled/raotsuplementos.com.mx.conf
+
+
+Add this location block inside your server block:
+location /webhook {
+    proxy_pass http://127.0.0.1:5000/webhook;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+
+
+Restart Nginx:
+sudo systemctl restart nginx
+
+
+In your GitHub repository settings, add a webhook:
+Go to your repository → Settings → Webhooks → Add webhook
+Payload URL: https://raotsuplementos.com.mx/webhook
+Content type: application/json
+Secret: The same secret token you used in webhook.py
+Events: Select "Just the push event"

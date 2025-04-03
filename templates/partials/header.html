@@ -1,0 +1,59 @@
+<div class="promo-strip">
+    <div class="container">
+        <p>🎁 Envío GRATIS en compras mayores a $999 | Recibe 10% de descuento en tu primera compra con el código: BIENVENIDO10</p>
+    </div>
+</div>
+
+<header class="site-header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="{% url 'store:home' %}" class="logo">
+                <img src="{% static 'images/raot-logo.png' %}" alt="RAOT Suplementos" class="logo-img">
+            </a>
+            
+            <div class="search-box">
+                <form action="{% url 'store:product_list' %}" method="get">
+                    <input type="text" name="search" placeholder="Buscar productos..." value="{{ request.GET.search }}">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-links">
+                    <li><a href="{% url 'store:home' %}">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="{% url 'store:product_list' %}">Suplementos <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            {% for category in categories %}
+                            <a href="{% url 'store:product_list' %}?category={{ category.id }}">{{ category.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    <li><a href="{% url 'store:product_list' %}?bestseller=true">Más Vendidos</a></li>
+                    <li><a href="#">Ofertas</a></li>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-actions">
+                <div class="action-item">
+                    <a href="#" class="action-link">
+                        <i class="fas fa-user"></i>
+                        <span class="action-text">Mi Cuenta</span>
+                    </a>
+                </div>
+                <div class="action-item">
+                    <a href="{% url 'cart:cart_detail' %}" class="action-link cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">{{ cart.get_total_quantity }}</span>
+                        <span class="action-text">Carrito</span>
+                    </a>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>

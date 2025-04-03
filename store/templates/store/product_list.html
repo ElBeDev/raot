@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Productos - RAOT Suplementos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="section-title">Nuestros Productos</h1>
+        
+        <div class="product-filters">
+            <div class="filter-group">
+                <label for="category">Categoría:</label>
+                <select id="category" class="filter-select">
+                    <option value="">Todas las categorías</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"i" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="sort">Ordenar por:</label>
+                <select id="sort" class="filter-select">
+                    <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Nombre (A-Z)</option>
+                    <option value="-name" {% if request.GET.sort == '-name' %}selected{% endif %}>Nombre (Z-A)</option>
+                    <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Precio (menor a mayor)</option>
+                    <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>Precio (mayor a menor)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="card">
+                <a href="{% url 'store:product_detail' product.id %}">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+                    {% else %}
+                    <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" class="card-img">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title">{{ product.name }}</h3>
+                        <div class="card-price">${{ product.price }} MXN</div>
+                        <a href="{% url 'store:product_detail' product.id %}" class="btn btn-primary">Ver Detalles</a>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="no-products">
+                <p>No se encontraron productos que coincidan con los filtros seleccionados.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+    // Handle filter changes
+    document.getElementById('category').addEventListener('change', function() {
+        applyFilters();
+    });
+    
+    document.getElementById('sort').addEventListener('change', function() {
+        applyFilters();
+    });
+    
+    function applyFilters() {
+        const categoryValue = document.getElementById('category').value;
+        const sortValue = document.getElementById('sort').value;
+        
+        let url = new URL(window.location.href);
+        let params = new URLSearchParams(url.search);
+        
+        if (categoryValue) {
+            params.set('category', categoryValue);
+        } else {
+            params.delete('category');
+        }
+        
+        if (sortValue) {
+            params.set('sort', sortValue);
+        } else {
+            params.delete('sort');
+        }
+        
+        url.search = params.toString();
+        window.location.href = url.toString();
+    }
+</script>
+{% endblock %}

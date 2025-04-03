@@ -16,17 +16,17 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Near the SECRET_KEY section, add:
-try:
-    from .local_settings import *
-except ImportError:
-    pass
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-q$@10ubp67y+hd^rqsja4&pnne$fg-yai8pf^c62#x4%2etjo6'
+
+# Import local settings
+try:
+    from .settings_local import *  # This is the correct file name
+except ImportError:
+    pass
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -80,6 +80,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'cart.context_processors.cart',  # Add this line
+                'store.context_processors.categories',  # Add this line
             ],
         },
     },
@@ -301,19 +302,8 @@ JAZZMIN_UI_TWEAKS = {
 
 # Make sure this is at the BOTTOM of your settings.py file:
 
-try:
-    from .local_settings import *
-except ImportError:
-    pass
-
 # Import local settings
 try:
-    from .settings_local import *
-except ImportError:
-    pass
-    from .settings_local import *
-except ImportError:
-    pass
-    from .settings_local import *
+    from .settings_local import *  # This is the correct file name
 except ImportError:
     pass

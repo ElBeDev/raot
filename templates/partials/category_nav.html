@@ -1,0 +1,137 @@
+<div class="category-navigation">
+    <div class="category-navigation-header">
+        <i class="fas fa-th-large"></i> Categorías
+    </div>
+    <ul>
+        <li>
+            <a href="{% url 'store:product_list' %}" {% if not request.GET.category %}class="active"{% endif %}>
+                Todos los productos
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'store:product_list' %}?bestseller=true" {% if request.GET.bestseller %}class="active"{% endif %}>
+                Best Sellers <span class="category-badge">HOT</span>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'store:product_list' %}?new=true" {% if request.GET.new %}class="active"{% endif %}>
+                Nuevos productos
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'store:product_list' %}?discount=true" {% if request.GET.discount %}class="active"{% endif %}>
+                Ofertas <span class="category-badge">SALE</span>
+            </a>
+        </li>
+        
+        <!-- Supplement Categories Section -->
+        <li {% if request.GET.category_group == 'supplements' %}class="open"{% endif %}>
+            <a href="javascript:void(0);">
+                Suplementos
+                <i class="fas fa-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul class="subcategory-menu">
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=omega3">Omega 3</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=magnesium">Magnesio</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=probiotics">Probióticos</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=collagen">Colágeno</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=antioxidants">Antioxidantes</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=vitamin">Vitaminas</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=minerals">Minerales</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=supplements&category=protein">Proteínas</a>
+                </li>
+            </ul>
+        </li>
+        
+        <!-- Targeted Products Section -->
+        <li {% if request.GET.category_group == 'targeted' %}class="open"{% endif %}>
+            <a href="javascript:void(0);">
+                Productos Específicos
+                <i class="fas fa-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul class="subcategory-menu">
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=targeted&category=women">Para Ella</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=targeted&category=men">Para Él</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=targeted&category=personalcare">Cuidado Personal</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=targeted&category=detox">Detox</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=targeted&category=immunity">Inmunidad</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=targeted&category=energy">Energía</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=targeted&category=sleep">Sueño</a>
+                </li>
+            </ul>
+        </li>
+        
+        <!-- Other Categories Section -->
+        <li {% if request.GET.category_group == 'other' %}class="open"{% endif %}>
+            <a href="javascript:void(0);">
+                Otras Categorías
+                <i class="fas fa-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul class="subcategory-menu">
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=other&category=natural">Ingredientes Naturales</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=other&category=accessories">Accesorios</a>
+                </li>
+                <li>
+                    <a href="{% url 'store:product_list' %}?category_group=other&category=food">Alimentación y Nutrición</a>
+                </li>
+            </ul>
+        </li>
+        
+        <!-- Dynamic Categories from Database -->
+        {% for category in categories %}
+            {% if category.parent is None %}  <!-- Only top-level categories -->
+            <li {% if request.GET.category == category.id|stringformat:"i" %}class="open"{% endif %}>
+                <a href="{% url 'store:product_list' %}?category={{ category.id }}">
+                    {{ category.name }}
+                    {% if category.subcategories.exists %}
+                    <i class="fas fa-chevron-down dropdown-indicator"></i>
+                    {% endif %}
+                </a>
+                
+                {% if category.subcategories.exists %}
+                <ul class="subcategory-menu">
+                    {% for subcategory in category.subcategories.all %}
+                    <li>
+                        <a href="{% url 'store:product_list' %}?category={{ subcategory.id }}">
+                            {{ subcategory.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>

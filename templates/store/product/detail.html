@@ -1,200 +1,166 @@
-{% extends "base/base.html" %}
+{% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}{{ product.name }} | RAOT Supplements{% endblock %}
+{% block title %}{{ product.name }} | RAOT Suplementos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="row g-4">
-    <div class="col-md-5 mb-4">
-        <div class="card">
+<div class="product-detail">
+    <div class="product-gallery">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image" id="mainImage">
+        {% else %}
+        <img src="{% static 'images/product-placeholder.jpg' %}" alt="{{ product.name }}" class="main-image">
+        {% endif %}
+        
+        {% if product.product_images.exists %}
+        <div class="thumbnail-gallery">
             {% if product.image %}
-            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
-            {% else %}
-            <div class="bg-light-section text-center p-5">No Image</div>
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="thumbnail active" onclick="changeImage(this)">
             {% endif %}
+            
+            {% for image in product.product_images.all %}
+            <img src="{{ image.image.url }}" alt="{{ product.name }}" class="thumbnail" onclick="changeImage(this)">
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
     
-    <div class="col-md-7">
-        <div class="product-info mb-4">
-            <h1 class="mb-2 fw-bold h2">{{ product.name }}</h1>
-            <p class="text-muted mb-3">
-                <a href="{{ product.category.get_absolute_url }}" class="text-decoration-none">
-                    {{ product.category }}
-                </a>
-            </p>
-            
-            <div class="mb-3">
-                <div class="product-rating">
-                    <span class="click_star" data-rating="5">★</span>
-                    <span class="click_star" data-rating="4">★</span>
-                    <span class="click_star" data-rating="3">★</span>
-                    <span class="click_star" data-rating="2">★</span>
-                    <span class="click_star" data-rating="1">★</span>
-                    <span class="ms-2">(4.5)</span>
+    <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        
+        <div class="product-meta">
+            <span><i class="fas fa-tag"></i> {{ product.category.name }}</span>
+            {% if product.stock > 0 %}
+            <span class="in-stock"><i class="fas fa-check-circle"></i> En stock</span>
+            {% else %}
+            <span class="out-of-stock"><i class="fas fa-times-circle"></i> Agotado</span>
+            {% endif %}
+        </div>
+        
+        <div class="product-price">
+            {% if product.discount > 0 %}
+            <span class="original-price">${{ product.original_price }} MXN</span>
+            ${{ product.price }} MXN
+            <span class="discount-percent">-{{ product.discount }}%</span>
+            {% else %}
+            ${{ product.price }} MXN
+            {% endif %}
+        </div>
+        
+        <div class="product-description">
+            {{ product.description|linebreaks }}
+        </div>
+        
+        <form action="{% url 'cart:add' product.id %}" method="post">
+            {% csrf_token %}
+            <div class="add-to-cart">
+                <div class="quantity-control">
+                    <button type="button" class="quantity-btn" onclick="decrementQuantity()">-</button>
+                    <input type="number" name="quantity" value="1" min="1" max="10" class="quantity-input" id="quantityInput">
+                    <button type="button" class="quantity-btn" onclick="incrementQuantity()">+</button>
                 </div>
+                
+                <input type="hidden" name="override" value="False">
+                <button type="submit" class="btn btn-primary btn-lg">Agregar al Carrito</button>
             </div>
-            
-            <p class="price-tag h3 mb-4">${{ product.price }}</p>
-            
-            <div class="mb-4">
-                <h5 class="fw-bold mb-3">Product Description</h5>
-                <p>{{ product.description|linebreaks }}</p>
+        </form>
+        
+        <div class="product-features">
+            <div class="product-feature">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Envío en 24-48 horas</span>
             </div>
-            
-            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mb-4">
-                <div class="row g-3 align-items-center">
-                    {% csrf_token %}
-                    <div class="col-auto">
-                        <label for="id_quantity" class="col-form-label fw-semibold">Quantity:</label>
-                    </div>
-                    <div class="col-auto">
-                        <input type="number" name="quantity" value="1" min="1" max="99" required id="id_quantity" class="form-control">
-                    </div>
-                    <div class="col-auto">
-                        <input type="hidden" name="override" value="False">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-shopping-cart me-2"></i>Add to Cart
-                        </button>
-                    </div>
-                </div>
-            </form>
-            
-            <div class="d-flex gap-3 mb-4 mt-4 pt-4 border-top">
-                <div class="feature">
-                    <i class="fas fa-truck text-raot-accent"></i>
-                    <span>Free shipping on orders over $50</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-check-circle text-raot-accent"></i>
-                    <span>Quality Guarantee</span>
-                </div>
+            <div class="product-feature">
+                <i class="fas fa-undo"></i>
+                <span>30 días para devolución</span>
+            </div>
+            <div class="product-feature">
+                <i class="fas fa-shield-alt"></i>
+                <span>Garantía de calidad</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-5">
-    <div class="col-12">
+{% if related_products %}
+<div class="related-products">
+    <h2>También podría interesarte</h2>
+    
+    <div class="product-grid">
+        {% for product in related_products %}
         <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#reviews">Reviews</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#details">Details</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body p-4">
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="reviews">
-                        <h4 class="mb-4">Customer Reviews</h4>
-                        <div id="scm-reviews-importer" class="scm-reviews-importer">
-                            <!-- Reviews will be loaded here -->
-                            <p class="text-muted">No reviews yet. Be the first to review this product!</p>
-                            <button class="btn btn-secondary mt-3" id="write-review-btn">Write a Review</button>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="details">
-                        <h4 class="mb-4">Product Details</h4>
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <th style="width: 30%">Category</th>
-                                    <td>{{ product.category.name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>SKU</th>
-                                    <td>{{ product.id }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Availability</th>
-                                    <td>{% if product.available %}In Stock{% else %}Out of Stock{% endif %}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            {% if product.discount > 0 %}
+            <div class="discount-badge">-{{ product.discount }}%</div>
+            {% endif %}
+            
+            <a href="{% url 'store:product_detail' product.id %}">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+                {% else %}
+                <img src="{% static 'images/product-placeholder.jpg' %}" alt="{{ product.name }}" class="card-img">
+                {% endif %}
+            </a>
+            
+            <div class="card-body">
+                <h3 class="card-title">
+                    <a href="{% url 'store:product_detail' product.id %}">{{ product.name }}</a>
+                </h3>
+                
+                <div class="card-price">
+                    {% if product.discount > 0 %}
+                    <span class="original-price">${{ product.original_price }} MXN</span>
+                    {% endif %}
+                    ${{ product.price }} MXN
                 </div>
+                
+                <form action="{% url 'cart:add' product.id %}" method="post" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="override" value="False">
+                    <button type="submit" class="btn btn-primary btn-block">Agregar al Carrito</button>
+                </form>
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
-
-<!-- Review Modal -->
-<div id="scm-reveiw-importer-popup">
-    <div class="scm-popup-before"></div>
-    <div class="scm-popup-content">
-        <iframe id="scm-reviews-importer-iframe" src=""></iframe>
-    </div>
-</div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Initialize star rating system
-    document.addEventListener('DOMContentLoaded', function() {
-        const stars = document.querySelectorAll('.click_star');
+    // Image gallery
+    function changeImage(thumbnail) {
+        // Update main image
+        document.getElementById('mainImage').src = thumbnail.src;
         
-        stars.forEach(star => {
-            star.addEventListener('mouseover', function() {
-                const rating = this.getAttribute('data-rating');
-                highlightStars(rating);
-            });
-            
-            star.addEventListener('mouseout', function() {
-                resetStars();
-            });
-            
-            star.addEventListener('click', function() {
-                const rating = this.getAttribute('data-rating');
-                showReviewPopup();
-            });
+        // Update active thumbnail
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumb => {
+            thumb.classList.remove('active');
         });
-        
-        function highlightStars(rating) {
-            stars.forEach(star => {
-                if (star.getAttribute('data-rating') <= rating) {
-                    star.style.color = '#FFD700'; // gold
-                } else {
-                    star.style.color = '#ccc';
-                }
-            });
+        thumbnail.classList.add('active');
+    }
+    
+    // Quantity controls
+    function incrementQuantity() {
+        const input = document.getElementById('quantityInput');
+        const currentValue = parseInt(input.value);
+        if (currentValue < 10) {
+            input.value = currentValue + 1;
         }
-        
-        function resetStars() {
-            stars.forEach(star => {
-                star.style.color = '#FFD700'; // all gold for now
-            });
+    }
+    
+    function decrementQuantity() {
+        const input = document.getElementById('quantityInput');
+        const currentValue = parseInt(input.value);
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
         }
-        
-        // Review popup
-        const writeReviewBtn = document.getElementById('write-review-btn');
-        if (writeReviewBtn) {
-            writeReviewBtn.addEventListener('click', showReviewPopup);
-        }
-        
-        function showReviewPopup() {
-            const popup = document.getElementById('scm-reveiw-importer-popup');
-            if (popup) {
-                popup.classList.add('show-popup');
-                
-                // Example - in real implementation you'd set the correct URL
-                const iframe = document.getElementById('scm-reviews-importer-iframe');
-                iframe.src = "about:blank"; // Replace with actual review form URL
-                
-                const closePopup = document.querySelector('.scm-popup-before');
-                if (closePopup) {
-                    closePopup.addEventListener('click', function() {
-                        popup.classList.remove('show-popup');
-                    });
-                }
-            }
-        }
-        
-        // Initialize with all stars gold
-        resetStars();
-    });
+    }
 </script>
 {% endblock %}

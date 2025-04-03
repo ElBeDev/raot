@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RAOT Suplementos - Los mejores suplementos deportivos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Potencia tu Rendimiento</h1>
+            <p>Suplementos de máxima calidad para ayudarte a alcanzar tus objetivos fitness</p>
+            <a href="{% url 'store:product_list' %}" class="btn btn-primary">Ver Productos</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Productos Destacados</h2>
+        <div class="product-grid">
+            {% for product in featured_products %}
+            <div class="card">
+                <a href="{% url 'store:product_detail' product.id %}">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+                    {% else %}
+                    <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" class="card-img">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title">{{ product.name }}</h3>
+                        <div class="card-price">${{ product.price }} MXN</div>
+                        <a href="{% url 'store:product_detail' product.id %}" class="btn btn-primary">Ver Detalles</a>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section categories-section">
+    <div class="container">
+        <h2 class="section-title">Categorías</h2>
+        <div class="product-grid">
+            {% for category in categories %}
+            <div class="card">
+                <a href="{% url 'store:product_list' %}?category={{ category.id }}">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ category.name }}</h3>
+                        <p>{{ category.description|truncatewords:15 }}</p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section why-us-section">
+    <div class="container">
+        <h2 class="section-title">¿Por qué elegir RAOT?</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <i class="fas fa-award"></i>
+                <h3>Calidad Premium</h3>
+                <p>Todos nuestros productos son de la más alta calidad y pureza.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shipping-fast"></i>
+                <h3>Envío Rápido</h3>
+                <p>Entrega rápida a todo México.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <h3>Compra Segura</h3>
+                <p>Utilizamos métodos de pago seguros para proteger tus datos.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

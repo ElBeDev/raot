@@ -3,9 +3,17 @@ from django.utils.safestring import mark_safe
 from .models import Product, Category, SiteCustomization
 
 # Custom ModelAdmin classes
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'parent', 'slug', 'display_order', 'is_featured']
+    list_filter = ['is_featured', 'parent']
+    search_fields = ['name', 'description']
+    prepopulated_fields = {'slug': ('name',)}
+    list_editable = ['display_order', 'is_featured']
+
+@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'price', 'category', 'available', 'image_preview']
-    # Change or remove the created_at field that's causing the error
     list_filter = ['available', 'category']  # Remove 'created_at'
     search_fields = ['name', 'description']
     prepopulated_fields = {'slug': ('name',)}
@@ -17,10 +25,6 @@ class ProductAdmin(admin.ModelAdmin):
         return "No Image"
     
     image_preview.short_description = 'Preview'
-
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
-    prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(SiteCustomization)
 class SiteCustomizationAdmin(admin.ModelAdmin):
@@ -36,7 +40,3 @@ class SiteCustomizationAdmin(admin.ModelAdmin):
             'vendor/codemirror/mode/css/css.js',
             'js/admin_css_editor.js',
         )
-
-# Register with the default admin site
-admin.site.register(Product, ProductAdmin)
-admin.site.register(Category, CategoryAdmin)
