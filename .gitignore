@@ -37,3 +37,5 @@ media
 
 # Local development settings
 settings_local.py
+deploy_temp/raot_deploy.tar.gz
+deploy_temp/raot-project.tar.gz
