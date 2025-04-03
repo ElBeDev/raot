@@ -1,0 +1,25 @@
+/* Homepage specific styles */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('../images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 100px 0;
+}
+
+.featured-product-card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.category-card {
+    height: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.testimonial {
+    background-color: #111111;
+    border-left: 4px solid var(--raot-primary);
+    padding: 20px;
+}

@@ -1,0 +1,395 @@
+:root {
+    --raot-bg: #ffffff;
+    --raot-primary: #e12e20;
+    --raot-accent: #ffd700;  /* Keeping gold/yellow for accent */
+    --raot-text: #212529;
+    --raot-border: #dbecfe;
+    --raot-light-bg: #f9fafb;
+}
+
+/* Base styles */
+body {
+    background-color: var(--raot-bg);
+    color: var(--raot-text);
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.5;
+}
+
+/* Navigation */
+.navbar {
+    background-color: #000000 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    color: var(--raot-accent) !important;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.nav-link {
+    color: white !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--raot-accent) !important;
+}
+
+/* Card styles - cleaner design */
+.card {
+    border-radius: 1rem;
+    border: 1px solid var(--raot-border);
+    background-color: white;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: var(--raot-accent);
+}
+
+/* Replace shadow with cleaner border */
+.shadow {
+    box-shadow: none;
+    border: 1px solid var(--raot-border);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--raot-border);
+    padding: 1rem;
+}
+
+.product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .card-img-top {
+    height: 200px;
+    object-fit: contain;
+    padding: 1rem;
+    background-color: var(--raot-light-bg);
+}
+
+.product-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+}
+
+.product-card .card-title {
+    font-weight: 600;
+    color: var(--raot-text);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.product-card .card-text {
+    color: #6c757d;
+    flex: 1;
+    font-size: 0.925rem;
+}
+
+.product-card .card-footer {
+    background: transparent;
+    border-top: 1px solid var(--raot-border);
+    padding: 1rem 1.5rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: all 0.15s ease;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+}
+
+.btn-primary {
+    background-color: var(--raot-primary);
+    border-color: var(--raot-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #c61d10;
+    border-color: #c61d10;
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    color: var(--raot-primary);
+    border-color: var(--raot-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--raot-primary);
+    color: white;
+}
+
+/* Secondary button - inspired by the "Mark as Read" button */
+.btn-secondary {
+    background-color: var(--raot-light-bg);
+    color: #6B7280;
+    border: 1px solid var(--raot-border);
+}
+
+.btn-secondary:hover {
+    background-color: #e6e7e9;
+}
+
+/* Text colors */
+.text-raot-primary {
+    color: var(--raot-primary) !important;
+}
+
+.text-raot-accent {
+    color: var(--raot-accent) !important;
+}
+
+/* Section backgrounds */
+.bg-light-section {
+    background-color: var(--raot-light-bg);
+    padding: 3rem 0;
+}
+
+/* Category sidebar styles */
+.list-group-item {
+    border: none;
+    padding: 0.5rem 0;
+    font-weight: 500;
+}
+
+/* Footer */
+footer {
+    background-color: #000000 !important;
+    color: white;
+}
+
+footer a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+footer a:hover {
+    color: var(--raot-accent);
+    text-decoration: none;
+}
+
+/* Product details */
+.product-info {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--raot-border);
+    background-color: white;
+}
+
+/* Product reviews system */
+.click_star {
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+/* Star rating styling */
+.product-rating .click_star {
+    color: #ccc;
+    font-size: 24px;
+    transition: color 0.2s ease;
+}
+
+.product-rating .click_star:hover ~ .click_star {
+    color: #ccc;
+}
+
+.product-rating .click_star:hover,
+.product-rating .click_star.active {
+    color: var(--raot-accent);
+}
+
+/* Feature icons */
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.925rem;
+    color: #6c757d;
+}
+
+/* Keep the review system styles */
+#scm-review-importer-popup {
+    z-index: 999999999999;
+    position: relative;
+}
+
+#scm-reviews-importer-iframe, .scm-reviews-importer-iframe {
+    border: none;
+    margin-top: 35px;
+    height: 100%;
+}
+
+#scm-reveiw-importer-popup {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#scm-reveiw-importer-popup.show-popup {
+    visibility: visible;
+    opacity: 1;
+}
+
+.scm-popup-content {
+    width: calc(100% - 20px);
+    max-width: 992px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    z-index: 10000000;
+    height: calc(100% - 30px);
+    max-height: 600px;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.scm-popup-content iframe {
+    height: 100%;
+    width: 100%;
+    border: none;
+}
+
+.scm-popup-before {
+    position: fixed;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999999;
+    cursor: pointer;
+}
+
+/* Tabs */
+.nav-tabs .nav-link {
+    color: #6B7280 !important;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--raot-primary) !important;
+    border-bottom: 2px solid var(--raot-primary);
+    background-color: transparent;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .card-body, .card-footer {
+        padding: 1rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+}
+
+/* Badge styling */
+.badge {
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+    border-radius: 0.5rem;
+}
+
+/* Price tag styling */
+.price-tag {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--raot-primary);
+}
+
+/* Category menu styling */
+.category-menu {
+    padding: 1.25rem;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-radius: 0.5rem;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.09);
+}
+
+.category-menu-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    user-select: none;
+}
+
+.category-item {
+    font-weight: 500;
+    height: 3.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    gap: 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    color: var(--raot-text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.category-item:hover {
+    background-color: #f4f4f5;
+}
+
+.category-item.active {
+    color: var(--raot-primary);
+    background-color: rgba(225, 46, 32, 0.05);
+    border: 1px solid rgba(225, 46, 32, 0.3);
+    font-weight: 600;
+}
+
+.category-icon {
+    width: 1.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--raot-primary);
+}
+
+.category-item.active .category-icon {
+    color: var(--raot-primary);
+}
+
+/* Responsive adjustments for the category menu */
+@media (max-width: 767px) {
+    .category-menu {
+        margin-bottom: 1.5rem;
+    }
+    
+    .category-item {
+        height: 3rem;
+    }
+}

@@ -1,0 +1,38 @@
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{{ title }}</h3>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Added</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:store_product_change' product.id %}">
+                            {{ product.name }}
+                        </a>
+                    </td>
+                    <td>${{ product.price }}</td>
+                    <td>{{ product.created_at|date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No products added yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'admin:store_product_changelist' %}" class="btn btn-sm btn-primary">
+            View All Products
+        </a>
+    </div>
+</div>

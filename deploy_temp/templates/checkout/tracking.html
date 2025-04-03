@@ -1,0 +1,59 @@
+{% extends "base/base.html" %}
+{% block title %}Order Tracking{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">Order Tracking</h2>
+  
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="bg-dark p-4 rounded">
+        <h3 class="mb-3">Order #{{ order.id|truncatechars:8 }}</h3>
+        
+        <div class="mb-4">
+          <p><strong>Order Date:</strong> {{ order.created|date:"F j, Y" }}</p>
+          <p><strong>Status:</strong> {% if order.paid %}Paid{% else %}Pending Payment{% endif %}</p>
+        </div>
+        
+        <h4 class="mb-3">Shipping Details</h4>
+        <div class="mb-4">
+          <p>{{ order.first_name }} {{ order.last_name }}<br>
+            {{ order.address }}<br>
+            {{ order.city }}, {{ order.state }} {{ order.postal_code }}
+          </p>
+        </div>
+        
+        <h4 class="mb-3">Order Items</h4>
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th class="text-end">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td class="text-end">${{ item.get_cost }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="table-active">
+              <td colspan="2"><strong>Total</strong></td>
+              <td class="text-end"><strong>${{ order.get_total_cost }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="mt-4 text-center">
+          <a href="{% url 'store:product_list' %}" class="btn btn-primary">
+            Continue Shopping
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

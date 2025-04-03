@@ -1,0 +1,159 @@
+/* Custom styles for RAOT admin */
+
+:root {
+    --primary: #e12e20;
+    --secondary: #ffd700;
+    --accent: #212529;
+    --primary-red: #e12e20;
+    --accent-gold: #ffd700;
+}
+
+/* Header styles */
+#header {
+    background: #000;
+    color: white;
+}
+
+#header a:link, #header a:visited {
+    color: white;
+}
+
+#header a:hover {
+    color: var(--secondary);
+}
+
+/* Branding */
+#branding h1 {
+    font-weight: bold;
+}
+
+#branding h1 a:link, #branding h1 a:visited {
+    color: var(--secondary);
+}
+
+/* Navigation menu */
+.module h2, .module caption, .inline-group h2 {
+    background: var(--primary);
+}
+
+div.breadcrumbs {
+    background: #333;
+}
+
+/* Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: var(--primary);
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background: #c61d10;
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: var(--primary);
+}
+
+.btn-primary {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+}
+
+.btn-primary:hover {
+    background-color: #c61d10;
+    border-color: #c61d10;
+}
+
+/* Links */
+a:link, a:visited {
+    color: var(--primary);
+}
+
+a:hover {
+    color: #c61d10;
+}
+
+/* Tables and lists */
+thead th {
+    background: #f8f8f8;
+    color: #333;
+    font-weight: bold;
+}
+
+.row1 {
+    background: #fff;
+}
+
+.row2 {
+    background: #f9f9f9;
+}
+
+/* Login page */
+.login #header {
+    background-image: url('../img/raot-logo.png');
+    background-repeat: no-repeat;
+    background-position: center 30px;
+    padding-top: 150px;
+    height: 200px;
+}
+
+.login-card-body {
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* Custom styles to enhance Jazzmin */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--primary-red) !important;
+}
+
+/* Product image preview enhancements */
+.image-preview {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 3px;
+    transition: all 0.2s ease;
+}
+
+.image-preview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Custom logo styles */
+.brand-image {
+    max-height: 34px;
+}
+
+/* Jazzmin specific customizations */
+.sidebar-dark-primary {
+    background-color: #000 !important;
+}
+
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: var(--primary-red) !important;
+}
+
+.navbar-dark {
+    background-color: #000 !important;
+}
+
+/* Dashboard customizations */
+.small-box.bg-info {
+    background-color: var(--primary-red) !important;
+}
+
+.small-box.bg-success {
+    background-color: var(--accent-gold) !important;
+    color: #333 !important;
+}
+
+/* Form improvements */
+.form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 0.2rem rgba(225, 46, 32, 0.25);
+}
+
+/* Action buttons styling */
+.dropdown-item.active, .dropdown-item:active {
+    background-color: var(--primary-red);
+}

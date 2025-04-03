@@ -1,0 +1,27 @@
+/* Product specific styles */
+.product-image {
+    max-height: 400px;
+    object-fit: contain;
+    background-color: #111;
+    padding: 20px;
+}
+
+.product-details {
+    background-color: #111;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+.quantity-selector {
+    max-width: 120px;
+}
+
+.product-description {
+    line-height: 1.8;
+}
+
+.category-sidebar {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 5px;
+}

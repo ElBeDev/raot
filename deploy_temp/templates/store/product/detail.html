@@ -1,0 +1,200 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} | RAOT Supplements{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-5 mb-4">
+        <div class="card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+            {% else %}
+            <div class="bg-light-section text-center p-5">No Image</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="col-md-7">
+        <div class="product-info mb-4">
+            <h1 class="mb-2 fw-bold h2">{{ product.name }}</h1>
+            <p class="text-muted mb-3">
+                <a href="{{ product.category.get_absolute_url }}" class="text-decoration-none">
+                    {{ product.category }}
+                </a>
+            </p>
+            
+            <div class="mb-3">
+                <div class="product-rating">
+                    <span class="click_star" data-rating="5">★</span>
+                    <span class="click_star" data-rating="4">★</span>
+                    <span class="click_star" data-rating="3">★</span>
+                    <span class="click_star" data-rating="2">★</span>
+                    <span class="click_star" data-rating="1">★</span>
+                    <span class="ms-2">(4.5)</span>
+                </div>
+            </div>
+            
+            <p class="price-tag h3 mb-4">${{ product.price }}</p>
+            
+            <div class="mb-4">
+                <h5 class="fw-bold mb-3">Product Description</h5>
+                <p>{{ product.description|linebreaks }}</p>
+            </div>
+            
+            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mb-4">
+                <div class="row g-3 align-items-center">
+                    {% csrf_token %}
+                    <div class="col-auto">
+                        <label for="id_quantity" class="col-form-label fw-semibold">Quantity:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" name="quantity" value="1" min="1" max="99" required id="id_quantity" class="form-control">
+                    </div>
+                    <div class="col-auto">
+                        <input type="hidden" name="override" value="False">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-shopping-cart me-2"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="d-flex gap-3 mb-4 mt-4 pt-4 border-top">
+                <div class="feature">
+                    <i class="fas fa-truck text-raot-accent"></i>
+                    <span>Free shipping on orders over $50</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-check-circle text-raot-accent"></i>
+                    <span>Quality Guarantee</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#reviews">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#details">Details</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body p-4">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="reviews">
+                        <h4 class="mb-4">Customer Reviews</h4>
+                        <div id="scm-reviews-importer" class="scm-reviews-importer">
+                            <!-- Reviews will be loaded here -->
+                            <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                            <button class="btn btn-secondary mt-3" id="write-review-btn">Write a Review</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="details">
+                        <h4 class="mb-4">Product Details</h4>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 30%">Category</th>
+                                    <td>{{ product.category.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>SKU</th>
+                                    <td>{{ product.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Availability</th>
+                                    <td>{% if product.available %}In Stock{% else %}Out of Stock{% endif %}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div id="scm-reveiw-importer-popup">
+    <div class="scm-popup-before"></div>
+    <div class="scm-popup-content">
+        <iframe id="scm-reviews-importer-iframe" src=""></iframe>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize star rating system
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.click_star');
+        
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const rating = this.getAttribute('data-rating');
+                highlightStars(rating);
+            });
+            
+            star.addEventListener('mouseout', function() {
+                resetStars();
+            });
+            
+            star.addEventListener('click', function() {
+                const rating = this.getAttribute('data-rating');
+                showReviewPopup();
+            });
+        });
+        
+        function highlightStars(rating) {
+            stars.forEach(star => {
+                if (star.getAttribute('data-rating') <= rating) {
+                    star.style.color = '#FFD700'; // gold
+                } else {
+                    star.style.color = '#ccc';
+                }
+            });
+        }
+        
+        function resetStars() {
+            stars.forEach(star => {
+                star.style.color = '#FFD700'; // all gold for now
+            });
+        }
+        
+        // Review popup
+        const writeReviewBtn = document.getElementById('write-review-btn');
+        if (writeReviewBtn) {
+            writeReviewBtn.addEventListener('click', showReviewPopup);
+        }
+        
+        function showReviewPopup() {
+            const popup = document.getElementById('scm-reveiw-importer-popup');
+            if (popup) {
+                popup.classList.add('show-popup');
+                
+                // Example - in real implementation you'd set the correct URL
+                const iframe = document.getElementById('scm-reviews-importer-iframe');
+                iframe.src = "about:blank"; // Replace with actual review form URL
+                
+                const closePopup = document.querySelector('.scm-popup-before');
+                if (closePopup) {
+                    closePopup.addEventListener('click', function() {
+                        popup.classList.remove('show-popup');
+                    });
+                }
+            }
+        }
+        
+        // Initialize with all stars gold
+        resetStars();
+    });
+</script>
+{% endblock %}

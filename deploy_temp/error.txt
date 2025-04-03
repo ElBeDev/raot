@@ -1,0 +1,3 @@
+nginx: [emerg] cannot load certificate "/etc/letsencrypt/live/raotsuplementos.com.mx/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/raotsuplementos.com.mx/fullchain.pem, r) error:10000080:BIO routines::no such file)
+nginx: configuration file /etc/nginx/nginx.conf test failed
+(venv) root@srv777747:/home/raotsuplementos/htdocs/raotsuplementos.com.mx#    

@@ -1,0 +1,64 @@
+{% extends "base/base.html" %}
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">Payment</h2>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <div class="bg-dark p-4 rounded mb-4">
+        <h3 class="mb-3">Order #{{ order.id|truncatechars:8 }}</h3>
+        <p><strong>Total Amount:</strong> ${{ order.get_total_cost }}</p>
+        
+        {% if error %}
+          <div class="alert alert-danger">
+            {{ error }}
+          </div>
+        {% endif %}
+        
+        <form action="{% url 'checkout:payment' %}" method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="payment_method" id="clipmx" value="clipmx" checked>
+              <label class="form-check-label" for="clipmx">
+                Pay with CLIP.MX
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+        </form>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <h3 class="mb-3">Order Summary</h3>
+      <div class="bg-dark p-4 rounded">
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th class="text-end">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td class="text-end">${{ item.get_cost }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="table-active">
+              <td colspan="2"><strong>Total</strong></td>
+              <td class="text-end"><strong>${{ order.get_total_cost }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

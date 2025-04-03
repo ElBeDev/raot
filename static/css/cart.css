@@ -1,0 +1,21 @@
+/* Cart specific styles */
+.cart-table {
+    background-color: #111;
+    border-radius: 5px;
+}
+
+.cart-item-image {
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: contain;
+}
+
+.cart-summary {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.quantity-update {
+    max-width: 80px;
+}

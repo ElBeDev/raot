@@ -1,0 +1,81 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+{% endblock %}
+
+{% block title %}Products | RAOT Supplements{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0 fw-bold">Categories</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item ps-0">
+                        <a href="{% url 'store:product_list' %}" class="text-decoration-none {% if not category %}text-raot-primary fw-bold{% else %}text-dark{% endif %}">
+                            All Products
+                        </a>
+                    </li>
+                    {% for c in categories %}
+                    <li class="list-group-item ps-0">
+                        <a href="{{ c.get_absolute_url }}" class="text-decoration-none {% if category.slug == c.slug %}text-raot-primary fw-bold{% else %}text-dark{% endif %}">
+                            {{ c.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <h2 class="mb-4 fw-bold">{% if category %}{{ category.name }}{% else %}All Products{% endif %}</h2>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for product in products %}
+            <div class="col">
+                <div class="card product-card">
+                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="bg-light-section text-center py-5">No Image</div>
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price-tag">${{ product.price }}</span>
+                            <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="override" value="False">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-shopping-cart me-1"></i> Add
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No products found.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

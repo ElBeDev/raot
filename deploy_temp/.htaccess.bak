@@ -1,0 +1,41 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Allow direct access to PHP helper scripts
+    RewriteCond %{REQUEST_URI} !^/migrate\.php
+    RewriteCond %{REQUEST_URI} !^/createadmin\.php
+    RewriteCond %{REQUEST_URI} !^/resetpassword\.php
+    RewriteCond %{REQUEST_URI} !^/collectstatic\.php
+    RewriteCond %{REQUEST_URI} !^/reset\.php
+    
+    # Serve static files directly
+    RewriteCond %{REQUEST_URI} ^/static/(.*)$
+    RewriteRule ^static/(.*)$ /staticfiles/$1 [L]
+    
+    # Serve media files directly
+    RewriteCond %{REQUEST_URI} ^/media/(.*)$
+    RewriteRule ^media/(.*)$ /media/$1 [L]
+    
+    # Forward everything else to the Django app
+    RewriteCond %{REQUEST_URI} !^/static/
+    RewriteCond %{REQUEST_URI} !^/media/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ passenger_wsgi.py/$1 [QSA,L]
+</IfModule>
+
+# Python FCGI handler
+AddHandler fcgid-script .fcgi
+AddHandler cgi-script .py
+
+# For Python scripts
+<Files *.py>
+    Options +ExecCGI
+</Files>
+
+# PHP settings (if needed)
+<IfModule mod_php7.c>
+    php_flag display_errors Off
+    php_value post_max_size 64M
+    php_value upload_max_filesize 64M
+    php_flag session.use_only_cookies on
+</IfModule>

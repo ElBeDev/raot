@@ -1,0 +1,92 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}RAOT Supplements - Premium Health & Fitness Supplements{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Side Category Menu -->
+    <div class="col-md-3 mb-4">
+        <div class="category-menu">
+            <h3 class="category-menu-title">Categories</h3>
+            
+            <a href="{% url 'store:product_list' %}" class="category-item {% if not category %}active{% endif %}">
+                <div class="category-icon">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                All Products
+            </a>
+            
+            {% for c in categories %}
+            <a href="{{ c.get_absolute_url }}" class="category-item {% if category.slug == c.slug %}active{% endif %}">
+                <div class="category-icon">
+                    {% if c.name == 'Protein' %}
+                    <i class="fas fa-dumbbell"></i>
+                    {% elif c.name == 'Pre-Workout' %}
+                    <i class="fas fa-bolt"></i>
+                    {% elif c.name == 'Vitamins' %}
+                    <i class="fas fa-pills"></i>
+                    {% else %}
+                    <i class="fas fa-flask"></i>
+                    {% endif %}
+                </div>
+                {{ c.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Right Side Product Display -->
+    <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0 fw-bold">Featured Products</h2>
+            <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary btn-sm">View All</a>
+        </div>
+        
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+            {% for product in products %}
+            <div class="col">
+                <div class="card product-card">
+                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="bg-light-section text-center py-5">No Image</div>
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text">{{ product.description|truncatewords:10 }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price-tag">${{ product.price }}</span>
+                            <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="override" value="False">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-shopping-cart me-1"></i> Add
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No products found.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
