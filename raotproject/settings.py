@@ -89,12 +89,8 @@ WSGI_APPLICATION = 'raotproject.wsgi.application'
 # Default to SQLite for local development
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'raot_db',
-        'USER': 'admin',
-        'PASSWORD': 'RaotSuper2025',  # Note the lowercase 'a'
-        'HOST': '69.62.95.109',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
