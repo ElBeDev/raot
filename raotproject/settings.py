@@ -302,8 +302,13 @@ JAZZMIN_UI_TWEAKS = {
 
 # Make sure this is at the BOTTOM of your settings.py file:
 
-# Import local settings that override the above
+# Import local settings if available, otherwise use SQLite for development
 try:
     from .settings_local import *
 except ImportError:
-    pass
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
