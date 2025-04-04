@@ -22,12 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-q$@10ubp67y+hd^rqsja4&pnne$fg-yai8pf^c62#x4%2etjo6'
 
-# Import local settings
-try:
-    from .settings_local import *  # This is the correct file name
-except ImportError:
-    pass
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -95,8 +89,12 @@ WSGI_APPLICATION = 'raotproject.wsgi.application'
 # Default to SQLite for local development
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'raot_db',
+        'USER': 'admin',
+        'PASSWORD': 'RaotSuper2025',  # Note the lowercase 'a'
+        'HOST': '69.62.95.109',
+        'PORT': '5432',
     }
 }
 
@@ -168,8 +166,13 @@ CLIPMX = {
     'WEBHOOK_SECRET': '',  # Add your webhook secret if needed
 }
 
-# Site URL
-SITE_URL = 'https://raotsuplementos.com.mx'
+# CLIP.MX Payment Gateway Settings
+CLIP_API_KEY = 'f1544953-c525-470c-a912-1f65c11a57ee'
+CLIP_SECRET_KEY = 'f254c93d-e7e8-41cf-ab14-a313f3c0d2b3'
+CLIP_WEBHOOK_SECRET = 'f254c93d-e7e8-41cf-ab14-a313f3c0d2b3'
+
+# Site URL - used for payment callbacks
+SITE_URL = 'https://raotsuplementos.com.mx'  # Change to your actual domain
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
@@ -184,7 +187,8 @@ JAZZMIN_SETTINGS = {
     "site_header": "RAOT",
     
     # Square logo to use for your site
-    "site_logo": "images/raot-logo.png",
+    "site_logo": None,  # Remove the site_logo setting or set to a small icon
+    "site_icon": "images/favicon.ico",  # Use a small favicon
     
     # Welcome text on the login screen
     "welcome_sign": "Welcome to RAOT Supplements Admin",
@@ -228,10 +232,10 @@ JAZZMIN_SETTINGS = {
     "custom_js": "js/admin.js",
     
     # Logo to use for login form in dark theme
-    "login_logo": "img/raot-logo.png",
+    "login_logo": None,  # Remove this or set to a properly sized image (max 150px height)
     
     # Logo to use for login form in light theme
-    "login_logo_dark": "img/raot-logo-dark.png",
+    "login_logo_dark": None,  # Remove this or set to a properly sized image
     
     # Custom links at the footer of the sidebar menu
     "custom_links": {
@@ -302,8 +306,8 @@ JAZZMIN_UI_TWEAKS = {
 
 # Make sure this is at the BOTTOM of your settings.py file:
 
-# Import local settings
+# Import local settings that override the above
 try:
-    from .settings_local import *  # This is the correct file name
+    from .settings_local import *
 except ImportError:
     pass

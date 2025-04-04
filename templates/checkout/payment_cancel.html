@@ -1,0 +1,295 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Pago Cancelado | RAOT Suplementos{% endblock %}
+
+{% block content %}
+<div class="payment-cancel-container">
+    <div class="cancel-header">
+        <div class="cancel-icon">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <h1>Pago Cancelado</h1>
+        <p class="cancel-message">Tu proceso de pago ha sido cancelado o no se ha completado correctamente.</p>
+    </div>
+    
+    <div class="order-info">
+        <h2>Información del Pedido</h2>
+        <div class="order-summary">
+            <div class="order-row">
+                <span class="label">Número de Pedido:</span>
+                <span class="value">{{ order.id }}</span>
+            </div>
+            
+            <div class="order-row">
+                <span class="label">Fecha:</span>
+                <span class="value">{{ order.created|date:"d/m/Y H:i" }}</span>
+            </div>
+            
+            <div class="order-row">
+                <span class="label">Estado:</span>
+                <span class="value status-badge">Cancelado</span>
+            </div>
+            
+            <div class="order-row">
+                <span class="label">Total:</span>
+                <span class="value">${{ order.get_total_cost }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="reasons-section">
+        <h2>Posibles Razones</h2>
+        <div class="reasons-container">
+            <div class="reason">
+                <div class="reason-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="reason-text">
+                    <h4>Problemas con la Tarjeta</h4>
+                    <p>Tu tarjeta podría haber sido rechazada por falta de fondos o por restricciones de seguridad.</p>
+                </div>
+            </div>
+            
+            <div class="reason">
+                <div class="reason-icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <div class="reason-text">
+                    <h4>Cancelación Voluntaria</h4>
+                    <p>Has decidido cancelar el proceso de pago antes de completarlo.</p>
+                </div>
+            </div>
+            
+            <div class="reason">
+                <div class="reason-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="reason-text">
+                    <h4>Error Técnico</h4>
+                    <p>Ha ocurrido un error durante el procesamiento del pago.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="what-now">
+        <h2>¿Qué Puedo Hacer Ahora?</h2>
+        <div class="options-container">
+            <div class="option">
+                <div class="option-icon">
+                    <i class="fas fa-redo-alt"></i>
+                </div>
+                <div class="option-text">
+                    <h4>Intentar Nuevamente</h4>
+                    <p>Puedes intentar completar tu pedido nuevamente utilizando otro método de pago.</p>
+                    <a href="{% url 'checkout:payment_process' %}" class="retry-btn">
+                        <i class="fas fa-credit-card"></i> Reintentar Pago
+                    </a>
+                </div>
+            </div>
+            
+            <div class="option">
+                <div class="option-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="option-text">
+                    <h4>Revisar tu Carrito</h4>
+                    <p>Puedes volver a tu carrito para revisar los productos antes de volver a intentar el pago.</p>
+                    <a href="{% url 'cart:cart_detail' %}" class="cart-btn">
+                        <i class="fas fa-shopping-cart"></i> Ver Carrito
+                    </a>
+                </div>
+            </div>
+            
+            <div class="option">
+                <div class="option-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="option-text">
+                    <h4>Soporte al Cliente</h4>
+                    <p>Si sigues teniendo problemas, contáctanos para que podamos ayudarte con tu pedido.</p>
+                    <a href="mailto:ayuda@raotsuplementos.com.mx" class="support-btn">
+                        <i class="fas fa-envelope"></i> Contactar Soporte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <a href="{% url 'store:product_list' %}" class="continue-shopping">
+            <i class="fas fa-arrow-left"></i> Volver a la Tienda
+        </a>
+    </div>
+</div>
+
+<style>
+    .payment-cancel-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+    
+    .cancel-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .cancel-icon {
+        font-size: 80px;
+        color: #e74c3c;
+        margin-bottom: 20px;
+    }
+    
+    .cancel-header h1 {
+        font-size: 32px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .cancel-message {
+        font-size: 18px;
+        color: #666;
+    }
+    
+    .order-info h2, .reasons-section h2, .what-now h2 {
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+    }
+    
+    .order-summary {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 6px;
+        margin-bottom: 30px;
+    }
+    
+    .order-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .order-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .label {
+        font-weight: 600;
+        color: #666;
+    }
+    
+    .status-badge {
+        padding: 3px 10px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    .reasons-container, .options-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .reason, .option {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .reason-icon, .option-icon {
+        font-size: 30px;
+        color: #e12e20;
+        margin-bottom: 15px;
+    }
+    
+    .reason-text h4, .option-text h4 {
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .reason-text p, .option-text p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    
+    .retry-btn, .cart-btn, .support-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background-color: #e12e20;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .retry-btn:hover, .cart-btn:hover, .support-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+    
+    .retry-btn i, .cart-btn i, .support-btn i {
+        margin-right: 5px;
+    }
+    
+    .actions {
+        margin-top: 40px;
+        text-align: center;
+    }
+    
+    .continue-shopping {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 25px;
+        background-color: #333;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .continue-shopping:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+    
+    .continue-shopping i {
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .payment-cancel-container {
+            padding: 20px;
+        }
+        
+        .reasons-container, .options-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

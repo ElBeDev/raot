@@ -1,22 +1,29 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 import uuid
 
 class Category(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
-    description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='categories', blank=True)
-    # Add the parent field for hierarchical categories
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='subcategories', null=True, blank=True)
+    name = models.CharField(max_length=100, verbose_name=_('Name'))
+    slug = models.SlugField(max_length=100, unique=True, verbose_name=_('Slug'))
+    description = models.TextField(blank=True, verbose_name=_('Description'))
+    image = models.ImageField(upload_to='categories/', blank=True, null=True, verbose_name=_('Image'))
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='subcategories',
+        null=True,
+        blank=True,
+        verbose_name=_('Parent Category')
+    )
     display_order = models.IntegerField(default=0)
     is_featured = models.BooleanField(default=False)
     
     class Meta:
-        ordering = ('display_order', 'name',)
-        verbose_name = 'category'
-        verbose_name_plural = 'categories'
+        verbose_name = _('Category')
+        verbose_name_plural = _('Categories')
+        ordering = ['name']
     
     def __str__(self):
         return self.name
@@ -34,7 +41,6 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    # New fields
     original_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     is_featured = models.BooleanField(default=False)
     is_bestseller = models.BooleanField(default=False)
@@ -62,7 +68,6 @@ class Product(models.Model):
     def has_discount(self):
         return self.original_price and self.original_price > self.price
 
-# Admin dashboard widget
 class RecentProductsWidget:
     """Display recent products in the admin dashboard."""
     template = 'admin/recent_products_widget.html'

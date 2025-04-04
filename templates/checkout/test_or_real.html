@@ -1,0 +1,375 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Opciones de Pago | RAOT Suplementos{% endblock %}
+
+{% block content %}
+<div class="payment-options-container">
+    <div class="payment-options-header">
+        <h1>Opciones de Pago</h1>
+        
+        <div class="development-notice">
+            <i class="fas fa-code"></i>
+            <strong>Modo de Desarrollo:</strong> Estás en un entorno local donde la conexión a CLIP.MX puede no funcionar.
+        </div>
+        
+        {% if api_error %}
+        <div class="api-error-alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="error-content">
+                <h3>Error de Conexión</h3>
+                <p>No se pudo conectar con la pasarela de pago CLIP.MX:</p>
+                <pre>{{ api_error }}</pre>
+                <p>Esto ocurre porque el entorno de desarrollo no tiene acceso directo a CLIP.MX.</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="order-summary">
+            <h3>Resumen del Pedido #{{ order.id }}</h3>
+            <div class="order-details">
+                <div class="detail-row">
+                    <span class="label">Cliente:</span>
+                    <span class="value">{{ order.first_name }} {{ order.last_name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Total:</span>
+                    <span class="value">${{ order.get_total_cost }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Dirección:</span>
+                    <span class="value">{{ order.address }}, {{ order.city }}, {{ order.postal_code }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="options-container">
+        <h2>Selecciona una Opción:</h2>
+        
+        <div class="payment-options">
+            <form method="post" class="payment-option-form">
+                {% csrf_token %}
+                
+                <div class="option real-option">
+                    <div class="option-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="option-content">
+                        <h3>Intentar Pago Real con CLIP.MX</h3>
+                        <p><strong>Nota:</strong> Esta opción puede fallar en un entorno de desarrollo local debido a restricciones de red o firewall. Funcionará correctamente cuando el sitio esté desplegado en el servidor.</p>
+                        <button type="submit" name="choice" value="real" class="btn-real">
+                            <i class="fas fa-lock"></i> Intentar Conexión Real
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="option-divider">
+                    <span>O</span>
+                </div>
+                
+                <div class="option simulate-option">
+                    <div class="option-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="option-content">
+                        <h3>Simular Pago Exitoso (Solo Desarrollo)</h3>
+                        <p>Esta opción simula un pago exitoso para pruebas en desarrollo local.</p>
+                        <p><strong>Importante:</strong> En el servidor de producción, el flujo de pago se conectará automáticamente con CLIP.MX sin mostrar esta página.</p>
+                        <button type="submit" name="choice" value="simulate" class="btn-simulate">
+                            <i class="fas fa-flask"></i> Simular Pago Exitoso
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="integration-notes">
+        <h3>Notas sobre la Integración:</h3>
+        <ul>
+            <li>En el entorno de <strong>producción</strong>, los clientes serán redirigidos directamente a la página de pago de CLIP.MX sin ver esta pantalla.</li>
+            <li>La opción de simular el pago solo está disponible en el entorno de desarrollo.</li>
+            <li>Asegúrate de que el servidor tenga acceso a Internet y pueda conectarse a los servidores de CLIP.MX.</li>
+        </ul>
+    </div>
+    
+    <div class="actions">
+        <a href="{% url 'store:product_list' %}" class="btn-cancel">
+            <i class="fas fa-arrow-left"></i> Cancelar y Volver a la Tienda
+        </a>
+    </div>
+</div>
+
+<style>
+    .payment-options-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+    
+    .payment-options-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .payment-options-header h1 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    .development-notice {
+        background-color: #f8f9fa;
+        border-left: 4px solid #6610f2;
+        padding: 10px 15px;
+        margin: 15px 0;
+        font-size: 14px;
+    }
+    
+    .development-notice i {
+        margin-right: 5px;
+        color: #6610f2;
+    }
+    
+    .api-error-alert {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        color: #856404;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .api-error-alert i {
+        font-size: 24px;
+        margin-right: 15px;
+        margin-top: 3px;
+    }
+    
+    .api-error-alert h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #856404;
+    }
+    
+    .api-error-alert pre {
+        background-color: rgba(0,0,0,0.05);
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin: 10px 0;
+    }
+    
+    .order-summary {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 6px;
+        margin: 20px 0;
+        text-align: left;
+    }
+    
+    .order-summary h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #444;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .order-details .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .order-details .label {
+        font-weight: 600;
+        color: #666;
+    }
+    
+    .options-container {
+        margin: 30px 0;
+    }
+    
+    .options-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    .payment-options {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .payment-option-form {
+        display: block;
+    }
+    
+    .option {
+        display: flex;
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .real-option {
+        background-color: #e8f4fd;
+        border: 1px solid #b8daff;
+    }
+    
+    .simulate-option {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+    }
+    
+    .option:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .option-icon {
+        font-size: 40px;
+        margin-right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+    }
+    
+    .real-option .option-icon {
+        color: #0d6efd;
+    }
+    
+    .simulate-option .option-icon {
+        color: #6c757d;
+    }
+    
+    .option-content {
+        flex: 1;
+    }
+    
+    .option-content h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .option-content p {
+        color: #666;
+        margin-bottom: 15px;
+    }
+    
+    .btn-real, .btn-simulate, .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-real {
+        background-color: #e12e20;
+        color: white;
+    }
+    
+    .btn-simulate {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .btn-cancel {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    
+    .btn-real:hover, .btn-simulate:hover, .btn-cancel:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+    
+    .btn-real i, .btn-simulate i, .btn-cancel i {
+        margin-right: 8px;
+    }
+    
+    .option-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 30px 0;
+        color: #666;
+    }
+    
+    .option-divider::before,
+    .option-divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .option-divider::before {
+        margin-right: 15px;
+    }
+    
+    .option-divider::after {
+        margin-left: 15px;
+    }
+    
+    .integration-notes {
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 30px 0;
+    }
+    
+    .integration-notes h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .integration-notes ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    
+    .integration-notes li {
+        margin-bottom: 10px;
+        color: #555;
+    }
+    
+    .actions {
+        text-align: center;
+        margin-top: 40px;
+    }
+    
+    @media (max-width: 768px) {
+        .payment-options-container {
+            padding: 20px;
+        }
+        
+        .option {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .option-icon {
+            margin-right: 0;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

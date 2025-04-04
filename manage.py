@@ -8,6 +8,7 @@ def main():
         from raotproject import settings_local
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'raotproject.settings_local')
     except ImportError:
+        # Check that it's using the main settings
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'raotproject.settings')
     
     try:

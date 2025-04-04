@@ -22,19 +22,23 @@ def home(request):
         'new_products': new_products,
     })
 
-def product_list(request):
-    products = Product.objects.filter(available=True)
+def product_list(request, category_slug=None):
+    category = None
     categories = Category.objects.all()
+    products = Product.objects.filter(available=True)
+    
+    # Get filter parameters
+    bestseller = request.GET.get('bestseller')
+    is_bestseller = request.GET.get('is_bestseller')
+    
+    # Handle both parameter names for backward compatibility
+    if bestseller or is_bestseller:
+        products = products.filter(is_bestseller=True)
     
     # Filter by category
     category_id = request.GET.get('category')
     if category_id:
         products = products.filter(category_id=category_id)
-    
-    # Filter bestsellers
-    if request.GET.get('bestseller'):
-        # Assuming you have a bestseller field or can determine this somehow
-        products = products.filter(bestseller=True)
     
     # Filter new products
     if request.GET.get('new'):

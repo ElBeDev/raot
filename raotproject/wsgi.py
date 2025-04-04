@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
 import os
 from django.core.wsgi import get_wsgi_application
 
-# Default to production settings
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'raotproject.production_settings')
+# Make sure it's using the main settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'raotproject.settings')
 
 application = get_wsgi_application()

@@ -5,11 +5,10 @@ from .models import Product, Category, SiteCustomization
 # Custom ModelAdmin classes
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'parent', 'slug', 'display_order', 'is_featured']
-    list_filter = ['is_featured', 'parent']
-    search_fields = ['name', 'description']
+    list_display = ['name', 'slug', 'parent']
     prepopulated_fields = {'slug': ('name',)}
-    list_editable = ['display_order', 'is_featured']
+    search_fields = ['name', 'description']
+    list_filter = ['parent']
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

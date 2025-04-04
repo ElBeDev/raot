@@ -5,8 +5,10 @@ app_name = 'checkout'
 
 urlpatterns = [
     path('create/', views.order_create, name='order_create'),
-    path('payment/', views.payment_process, name='payment'),
-    path('completed/', views.payment_completed, name='completed'),
+    path('payment/process/', views.payment_process, name='payment_process'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
     path('tracking/<uuid:order_id>/', views.order_tracking, name='order_tracking'),
-    path('webhook/', views.payment_webhook, name='webhook'),
+    path('webhook/clip/', views.clip_webhook, name='clip_webhook'),
+    path('test_or_real/<uuid:order_id>/', views.test_or_real, name='test_or_real'),
 ]
