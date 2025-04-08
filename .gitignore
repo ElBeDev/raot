@@ -39,7 +39,7 @@ db.sqlite3
 raotproject/settings_local.py
 
 # Static files collected by collectstatic (for development)
-# /staticfiles/
+staticfiles/
 
 # Deployment files
 deploy_temp/raot_deploy.tar.gz
@@ -51,3 +51,14 @@ deploy_temp/raot-project.tar.gz
 # Environment variables
 .env
 *.pem
+
+#Media
+media/
+
+#IDE
+.vscode/
+.idea/
+
+#Temp files
+*.swp
+*~
