@@ -1,0 +1,77 @@
+{% load i18n %}
+<footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+        <b>RAOT Admin</b> {% if version %} v{{ version }}{% endif %}
+    </div>
+    <strong>Copyright &copy; {% now "Y" %} <a href="https://raotsuplementos.com.mx">RAOT Supplements</a>.</strong>
+    All rights reserved.
+    <div class="mt-2 d-none d-sm-block">
+        <a href="/" class="text-accent mr-3"><i class="fas fa-home"></i> View Store</a>
+        <a href="mailto:admin@raotsuplementos.com.mx" class="text-accent mr-3"><i class="fas fa-envelope"></i> Contact Support</a>
+    </div>
+</footer>
+
+<style>
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    /* Card adjustments for mobile */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Form field adjustments */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    /* Table adjustments */
+    .table th, .table td {
+        padding: 0.5rem;
+    }
+    
+    /* Make sidebar more compact on tablet */
+    .sidebar-mini .main-sidebar .nav-sidebar .nav-link {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Fix dashboard cards on small screens */
+    .small-box {
+        margin-bottom: 1rem;
+    }
+    
+    .small-box h3 {
+        font-size: 1.5rem;
+    }
+    
+    /* Fix long text in breadcrumbs */
+    .breadcrumb-item {
+        max-width: 120px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Even smaller screens */
+@media (max-width: 576px) {
+    /* Stack buttons in forms */
+    .form-group .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Adjust content padding */
+    .content {
+        padding: 0.75rem;
+    }
+}
+</style>

@@ -1,0 +1,128 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root {
+        --background: #ffffff;
+        --accent: #ffd700;
+        --primary: #e12e20;
+        --secondary: #333333;
+        --text-primary: #333333;
+    }
+    
+    body.login {
+        height: 100vh;
+        background-color: var(--secondary);
+        background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("{% static 'images/raot-bg.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    
+    .login-box {
+        width: 450px;
+        max-width: 90%;
+        margin: 10% auto;
+    }
+    
+    .login-logo {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .login-logo img {
+        max-height: 100px;
+        margin-bottom: 15px;
+    }
+    
+    .login-logo h2 {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .login-card-body {
+        border-radius: 10px;
+        padding: 40px;
+        background-color: rgba(255, 255, 255, 0.97);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .login-box-msg {
+        color: var(--text-primary);
+        font-weight: 500;
+        margin-bottom: 25px;
+        text-align: center;
+        font-size: 1.2rem;
+    }
+    
+    .input-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-control {
+        height: 50px;
+        padding: 10px 15px;
+        font-size: 1rem;
+        border-radius: 6px;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        padding: 12px;
+        font-weight: 500;
+        margin-top: 15px;
+        border-radius: 6px;
+        height: 50px;
+        font-size: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div class="login-logo">
+    <img src="{% static 'images/raot-logo.png' %}" alt="RAOT Supplements" onerror="this.onerror=null; this.src='{% static 'img/raot-logo.png' %}'; this.style.maxHeight='60px';">
+    <h2>Admin Portal</h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="login-box">
+    <div class="card">
+        <div class="login-card-body">
+            <p class="login-box-msg">Sign in to manage your store</p>
+            <form action="{{ app_path }}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="username" class="form-control" placeholder="Username" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-user"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </div>
+                </div>
+            </form>
+            <div class="login-card-footer">
+                <p>RAOT Supplements Admin &copy; 2025</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

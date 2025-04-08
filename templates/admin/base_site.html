@@ -2,14 +2,128 @@
 {% load static %}
 
 {% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin-reset.css' %}">
   <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+  <style>
+    :root {
+      --background: #f5f7fa;
+      --accent: #ffd700;
+      --primary: #e12e20;
+      --secondary: #333333;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-light: #999999;
+      --card-bg: #f8f8f8;
+      --border-color: #e0e0e0;
+      --shadow: 0 5px 15px rgba(0,0,0,0.08);
+      --transition: all 0.3s ease;
+    }
+    
+    /* Reset de espaciado para contenedores principales */
+    .content-wrapper {
+      background-color: var(--background) !important;
+      padding: 30px !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    
+    .content {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 auto !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Contenedor para centrar contenido */
+    .content-container {
+      max-width: 1400px !important;
+      margin: 0 auto !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Corregir estructura de filas */
+    .row {
+      margin-left: -15px !important;
+      margin-right: -15px !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      width: auto !important;
+      box-sizing: border-box !important;
+    }
+    
+    .row > [class*="col-"] {
+      padding: 15px !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Override any inline styles from Jazzmin */
+    body {
+      color: var(--text-primary) !important;
+    }
+    
+    .navbar-dark {
+      background-color: var(--secondary) !important;
+      border-bottom: 3px solid var(--primary);
+    }
+    
+    .sidebar-dark-danger {
+      background-color: var(--secondary) !important;
+    }
+    
+    .sidebar-dark-danger .nav-sidebar > .nav-item > .nav-link.active {
+      background-color: var(--primary) !important;
+      border-left: 4px solid var(--accent) !important;
+    }
+    
+    .btn-primary, .btn-danger {
+      background-color: var(--primary) !important;
+      border-color: var(--primary) !important;
+    }
+  </style>
 {% endblock %}
 
 {% block branding %}
 <h1 id="site-name">
     <a href="{% url 'admin:index' %}">
-        <img src="{% static 'img/raot-logo.png' %}" height="40" alt="RAOT Admin">
-        RAOT Supplements Administration
+        <img src="{% static 'images/raot-logo.png' %}" height="40" alt="RAOT Admin" onerror="this.onerror=null; this.src='{% static 'img/raot-logo.png' %}';">
+        RAOT Supplements
     </a>
 </h1>
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add RAOT branded welcome message on dashboard
+      const welcomeElement = document.querySelector('.content-header h1');
+      if (welcomeElement && welcomeElement.textContent.includes('Dashboard')) {
+        const today = new Date();
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateStr = today.toLocaleDateString('en-US', dateOptions);
+        
+        welcomeElement.innerHTML = 'RAOT Supplements Dashboard <small class="text-muted d-block mt-2">Welcome to your control panel - ' + dateStr + '</small>';
+      }
+      
+      // Envolver el contenido en un contenedor centrado
+      const contentAreas = document.querySelectorAll('.content');
+      contentAreas.forEach(content => {
+        if (!content.parentElement.classList.contains('content-container') && 
+            !content.closest('.content-container')) {
+          const container = document.createElement('div');
+          container.className = 'content-container';
+          
+          // Solo envolver si no está ya en un contenedor
+          if (content.parentNode.classList.contains('content-wrapper')) {
+            content.parentNode.insertBefore(container, content);
+            container.appendChild(content);
+          }
+        }
+      });
+    });
+  </script>
 {% endblock %}

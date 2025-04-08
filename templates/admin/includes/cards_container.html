@@ -1,0 +1,30 @@
+{% load i18n static %}
+
+<div class="cards-container my-4">
+    {% if title %}
+    <h3 class="cards-title mb-4">{{ title }}</h3>
+    {% endif %}
+    
+    <div class="row equal-height">
+        {% for card in cards %}
+        <div class="col-lg-{{ card.width|default:'6' }} col-md-{{ card.md_width|default:'6' }} col-sm-12">
+            <div class="card h-100">
+                {% if card.header %}
+                <div class="card-header">
+                    <h3 class="card-title">{{ card.header }}</h3>
+                </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    {{ card.content|safe }}
+                    
+                    {% if card.footer %}
+                    <div class="card-footer mt-auto">
+                        {{ card.footer|safe }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

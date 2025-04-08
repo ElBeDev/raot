@@ -1,0 +1,57 @@
+/* Add these styles to your existing payment.css file */
+
+/* Payment Pending Page */
+.payment-pending {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.pending-icon {
+    text-align: center;
+    font-size: 80px;
+    color: #FFC107; /* Warning yellow */
+    margin-bottom: 20px;
+}
+
+.pending-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #FFC107;
+}
+
+.pending-message {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+}
+
+.pending-message h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: var(--text-primary);
+    text-transform: capitalize;
+}
+
+.order-summary {
+    margin: 30px 0;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.order-summary h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.next-steps {
+    margin: 30px 0;
+}
+
+.next-steps h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}

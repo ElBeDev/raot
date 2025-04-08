@@ -1,0 +1,101 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>Orders</h3>
+                <p>Manage customer orders</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <a href="{% url 'admin:checkout_order_changelist' %}" class="small-box-footer">
+                View orders <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>Products</h3>
+                <p>Manage your products</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <a href="{% url 'admin:store_product_changelist' %}" class="small-box-footer">
+                View products <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>Categories</h3>
+                <p>Manage product categories</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-folder"></i>
+            </div>
+            <a href="{% url 'admin:store_category_changelist' %}" class="small-box-footer">
+                View categories <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>Users</h3>
+                <p>Manage user accounts</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <a href="{% url 'admin:auth_user_changelist' %}" class="small-box-footer">
+                View users <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-tachometer-alt mr-2"></i>{% trans "My Actions" %}</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tr>
+                            <th style="width: 50%">{% trans 'Action' %}</th>
+                            <th style="width: 50%">{% trans 'Description' %}</th>
+                        </tr>
+                        <tr>
+                            <td><a href="{% url 'admin:store_product_add' %}"><i class="fas fa-plus mr-2"></i>{% trans 'Add Product' %}</a></td>
+                            <td>{% trans 'Add a new product to your store' %}</td>
+                        </tr>
+                        <tr>
+                            <td><a href="{% url 'admin:store_category_add' %}"><i class="fas fa-plus mr-2"></i>{% trans 'Add Category' %}</a></td>
+                            <td>{% trans 'Create a new product category' %}</td>
+                        </tr>
+                        <tr>
+                            <td><a href="{% url 'admin:checkout_order_changelist' %}?status__exact=pending"><i class="fas fa-clock mr-2"></i>{% trans 'Pending Orders' %}</a></td>
+                            <td>{% trans 'View orders that need your attention' %}</td>
+                        </tr>
+                        <tr>
+                            <td><a href="{% url 'admin:auth_user_changelist' %}"><i class="fas fa-users mr-2"></i>{% trans 'Manage Users' %}</a></td>
+                            <td>{% trans 'Edit user accounts and permissions' %}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

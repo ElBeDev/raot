@@ -13,7 +13,7 @@ DATABASES = {
         'NAME': 'raot_db',
         'USER': 'admin',
         'PASSWORD': 'RaotSuper2025',
-        'HOST': 'localhost',  # Changed from IP to localhost for server
+        'HOST': '127.0.0.1',  # Changed from IP to localhost for server
         'PORT': '5432',
     }
 }

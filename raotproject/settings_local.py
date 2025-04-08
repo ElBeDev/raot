@@ -3,39 +3,29 @@ PRODUCTION SETTINGS TEMPLATE
 Copy this file to settings_local.py on your production server
 """
 
-# Debug should be off in production
-DEBUG = False
+from pathlib import Path
+import os
+from .settings import *
 
-# Database configuration for PostgreSQL
+# Use SQLite for local development (simpler than remote PostgreSQL)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'raot_db',
-        'USER': 'admin',
-        'PASSWORD': 'RaotSuper2025',
-        'HOST': 'localhost',  # Changed from IP to localhost for server
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-# CLIP.MX Payment Gateway Settings
-CLIP_API_KEY = 'f1544953-c525-470c-a912-1f65c11a57ee'
-CLIP_SECRET_KEY = 'f254c93d-e7e8-41cf-ab14-a313f3c0d2b3'
-CLIP_WEBHOOK_SECRET = 'f254c93d-e7e8-41cf-ab14-a313f3c0d2b3'
+# Debug settings for development
+DEBUG = True
+ALLOWED_HOSTS = ['*']
 
-# Site URL for production
-SITE_URL = 'https://raotsuplementos.com.mx'
+# Override STATIC_URL and STATIC_ROOT for local development
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Force production mode for payment processing
-FORCE_PRODUCTION = True
-FORCE_PAYMENT_SIMULATION = False
-
-# Security settings
-ALLOWED_HOSTS = ['raotsuplementos.com.mx', 'www.raotsuplementos.com.mx', '69.62.95.109', 'localhost']
-
-# Static and media settings
-STATIC_ROOT = '/home/raotsuplementos/htdocs/raotsuplementos.com.mx/static/collected'
-MEDIA_ROOT = '/home/raotsuplementos/htdocs/raotsuplementos.com.mx/media'
-
-# Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Use SMTP for production
+# Media settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

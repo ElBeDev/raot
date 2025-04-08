@@ -1,0 +1,86 @@
+/* Reset básico para corregir problemas de layout */
+
+/* Reset de contenedores principales */
+.content-wrapper {
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    position: relative !important;
+}
+
+.content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    position: relative !important;
+}
+
+/* Reset para filas */
+.row {
+    margin-left: -15px !important;
+    margin-right: -15px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+    clear: both !important;
+}
+
+/* Reset para columnas */
+.row > [class*="col-"] {
+    padding: 15px !important;
+    position: relative !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+@media (min-width: 768px) {
+    .col-md-12 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .col-md-9 {
+        flex: 0 0 75% !important;
+        max-width: 75% !important;
+    }
+    
+    .col-md-6 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+    
+    .col-md-3 {
+        flex: 0 0 25% !important;
+        max-width: 25% !important;
+    }
+}
+
+/* Reset para tarjetas */
+.card {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+    word-wrap: break-word !important;
+    background-clip: border-box !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+}
+
+/* Contenido de tarjetas */
+.card-body {
+    flex: 1 1 auto !important;
+    min-height: 1px !important;
+    box-sizing: border-box !important;
+}
+
+/* Clearfix para evitar desbordamientos */
+.clearfix::after {
+    display: block !important;
+    clear: both !important;
+    content: "" !important;
+}

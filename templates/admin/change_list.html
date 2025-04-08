@@ -1,0 +1,201 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Estilos para contenedores principales */
+    .content-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Hacer que el encabezado sea más compacto e incluya la búsqueda */
+    .content-header {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+        width: 100%;
+    }
+    
+    /* Estilos para la barra de búsqueda compacta */
+    .compact-search {
+        display: inline-flex;
+        align-items: center;
+        max-width: 300px;
+        margin-left: 15px;
+    }
+    
+    .compact-search input[type="text"] {
+        height: 38px;
+        padding: 0 12px;
+        border-radius: 6px 0 0 6px;
+        border: 1px solid #ced4da;
+        border-right: none;
+        width: 200px;
+    }
+    
+    .compact-search button {
+        height: 38px;
+        border-radius: 0 6px 6px 0;
+        padding: 0 12px;
+        background-color: var(--primary);
+        border: 1px solid var(--primary);
+        color: white;
+    }
+    
+    /* Ajustes para que la tabla ocupe toda la anchura */
+    .row {
+        margin-left: -15px;
+        margin-right: -15px;
+        display: flex;
+        flex-wrap: wrap;
+        width: auto;
+        box-sizing: border-box;
+    }
+    
+    .row > [class*="col-"] {
+        padding: 15px;
+        box-sizing: border-box;
+    }
+    
+    .card {
+        margin-bottom: 25px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: none;
+        box-sizing: border-box;
+        width: 100%;
+    }
+    
+    .paginator-container {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-top: 25px;
+    }
+    
+    /* Ocultar la tarjeta de búsqueda original */
+    #toolbar form {
+        margin: 0; 
+    }
+    
+    /* Responsive para la búsqueda */
+    @media (max-width: 768px) {
+        .header-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .compact-search {
+            margin-left: 0;
+            margin-top: 10px;
+            max-width: 100%;
+            width: 100%;
+        }
+        
+        .compact-search input[type="text"] {
+            width: calc(100% - 45px);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="content-header">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1>{{ cl.opts.verbose_name_plural|capfirst }}</h1>
+            </div>
+            <div class="col-md-6 text-right header-actions">
+                {% if cl.search_fields %}
+                    <div class="compact-search">
+                        <form method="get">
+                            <div class="d-flex">
+                                <input type="text" size="15" name="{{ search_var }}" value="{{ cl.query }}" placeholder="{% trans 'Search' %}" class="form-control">
+                                <button type="submit" class="btn"><i class="fas fa-search"></i></button>
+                            </div>
+                            {% for pair in cl.params.items %}
+                                {% if pair.0 != search_var %}
+                                    <input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">
+                                {% endif %}
+                            {% endfor %}
+                        </form>
+                    </div>
+                {% endif %}
+                
+                {% block object-tools %}
+                    {% if has_add_permission %}
+                        {% block object-tools-items %}
+                            {% url cl.opts|admin_urlname:'add' as add_url %}
+                            {% if add_url %}
+                                <a href="{{ add_url }}" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> {% blocktranslate with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktranslate %}
+                                </a>
+                            {% endif %}
+                        {% endblock %}
+                    {% endif %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    {# Eliminamos la tarjeta grande de búsqueda original #}
+    
+    <div class="row">
+        <div class="{% if cl.has_filters %}col-md-9{% else %}col-md-12{% endif %}">
+            <div class="card">
+                <div class="card-body p-0">
+                    {% block result_list %}
+                        {% if action_form and actions_on_top and cl.show_admin_actions %}
+                            <div class="p-3 bg-light border-bottom">
+                                {% admin_actions %}
+                            </div>
+                        {% endif %}
+                        <div class="table-responsive">
+                            {% result_list cl %}
+                        </div>
+                        {% if action_form and actions_on_bottom and cl.show_admin_actions %}
+                            <div class="p-3 bg-light border-top">
+                                {% admin_actions %}
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+            
+            {% block pagination %}
+                <div class="paginator-container">
+                    {% pagination cl %}
+                </div>
+            {% endblock %}
+        </div>
+        
+        {% if cl.has_filters %}
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    {% block filters %}
+                        {% if cl.has_filters %}
+                            <div id="changelist-filter">
+                                <h2>{% trans 'Filter' %}</h2>
+                                {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Aseguramos que la barra de búsqueda original no se muestre #}
+{% block search %}{% endblock %}
+{% endblock %}

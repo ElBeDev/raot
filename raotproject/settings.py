@@ -273,42 +273,38 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": False,
     "body_small_text": False,
     "brand_small_text": False,
-    "brand_colour": "navbar-danger",  # Red theme to match RAOT color
-    "accent": "accent-danger",
+    "brand_colour": False,
+    "accent": "accent-warning",  # For gold accent
     "navbar": "navbar-dark",
-    "no_navbar_border": True,
+    "no_navbar_border": False,
     "navbar_fixed": True,
     "layout_boxed": False,
     "footer_fixed": False,
     "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-danger",
+    "sidebar": "sidebar-dark-primary",  # Use primary for the sidebar
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
     "sidebar_nav_child_indent": True,
     "sidebar_nav_compact_style": True,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": False,
-    "theme": "superhero",
-    "dark_mode_theme": "superhero",
+    "theme": "default",  # Use default theme and customize with our CSS
+    "dark_mode_theme": None,
     "button_classes": {
-        "primary": "btn-primary",
+        "primary": "btn-primary",  # We'll style this with our CSS
         "secondary": "btn-secondary",
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
         "success": "btn-success"
-    }
+    },
+    "actions_sticky_top": True
 }
 
 # Make sure this is at the BOTTOM of your settings.py file:
 
-# Import local settings if available, otherwise use SQLite for development
+# Import local settings if present
 try:
     from .settings_local import *
 except ImportError:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+    pass
