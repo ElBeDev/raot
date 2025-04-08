@@ -4,8 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
-ENV/
 build/
 develop-eggs/
 dist/
@@ -17,48 +15,30 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-venv/
 
 # Django
 *.log
 local_settings.py
-db.sqlite3-journal
-media/
-static/collected/
-
-# Database
 db.sqlite3
-*.sqlite3
-*.sqlite
-
-# Local settings
-*/settings_local.py
-raotproject/settings_local.py
-
-# Static files collected by collectstatic (for development)
+db.sqlite3-journal
+media
 staticfiles/
 
-# Deployment files
-deploy_temp/raot_deploy.tar.gz
-deploy_temp/raot-project.tar.gz
+# Virtual Environment
+venv/
+ENV/
 
-# Local development settings
-# settings_local.py
+# VS Code
+.vscode/
+.history
 
 # Environment variables
 .env
-*.pem
 
-#Media
-media/
-
-#IDE
-.vscode/
-.idea/
-
-#Temp files
-*.swp
-*~
+# System Files
+.DS_Store
+Thumbs.db

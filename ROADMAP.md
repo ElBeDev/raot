@@ -98,16 +98,11 @@
   - Payment Cancel: `/checkout/payment/cancel/`
   - Payment Webhook: `/checkout/webhook/clip/`
   - Test or Real Choice: `/checkout/test_or_real/<order_id>/`
-- Test API Keys:
-  - API Key: `f1544953-c525-470c-a912-1f65c11a57ee`
-  - Secret Key: `f254c93d-e7e8-41cf-ab14-a313f3c0d2b3`
-- Key Files:
-  - Payment Gateway: `d:\GitHub\roat\checkout\clip_payment.py`
-  - Payment Views: `d:\GitHub\roat\checkout\views.py`
-  - Payment URLs: `d:\GitHub\roat\checkout\urls.py`
-  - Test/Real Choice Template: `d:\GitHub\roat\templates\checkout\test_or_real.html`
-  - Payment Success Template: `d:\GitHub\roat\templates\checkout\payment_success.html`
-  - Payment Cancel Template: `d:\GitHub\roat\templates\checkout\payment_cancel.html`
+- Production API Keys:
+  - API Key: `b8021bcd-4e74-4068-b53b-50c72d4cb80b`
+  - Secret Key: `00a1f194-a240-44ad-86e2-ae352679514b`
+  - Token: `Basic YjgwMjFiY2QtNGU3NC00MDY4LWI1M2ItNTBjNzJkNGNiODBiOjAwYTFmMTk0LWEyNDAtNDRhZC04NmUyLWFlMzUyNjc5NTE0Yg==`
+  - Mode: `live`
 
 #### Payment Processing Flow
 1. **Order Creation**:
@@ -299,6 +294,61 @@ The RAOT Supplements site was successfully deployed to a production server with 
 6. Tested configuration syntax and restarted Nginx service
 7. Configured SSL certificates for secure HTTPS connections
 
+### Nginx Configuration Management
+
+#### Important Paths
+- Available sites: `/etc/nginx/sites-available/`
+- Enabled sites: `/etc/nginx/sites-enabled/`
+- Main configuration: `/etc/nginx/sites-available/raotsuplementos`
+
+#### Configuration Cleanup
+```bash
+# Remove duplicate configurations
+sudo rm /etc/nginx/sites-available/raotsuplementos.com.mx
+
+# Verify enabled sites
+ls -la /etc/nginx/sites-enabled/
+
+# Test configuration
+sudo nginx -t
+
+# Restart Nginx
+sudo systemctl restart nginx
+```
+
+#### Common Issues
+- Duplicate server_name directives in different configuration files
+- Multiple configuration files for the same domain
+- Symlink conflicts in sites-enabled directory
+
+### Nginx Setup
+
+#### Configuration Files
+- Main config: `/etc/nginx/sites-available/raotsuplementos`
+- Enabled symlink: `/etc/nginx/sites-enabled/raotsuplementos`
+
+#### Log Files
+- Access log: `/var/log/nginx/raot_access.log`
+- Error log: `/var/log/nginx/raot_error.log`
+
+#### Setup Commands
+```bash
+# Remove default configs
+sudo rm /etc/nginx/sites-enabled/default
+sudo rm /etc/nginx/sites-enabled/*
+
+# Enable our configuration
+sudo ln -sf /etc/nginx/sites-available/raotsuplementos /etc/nginx/sites-enabled/
+
+# Create and set permissions for logs
+sudo touch /var/log/nginx/raot_access.log
+sudo touch /var/log/nginx/raot_error.log
+sudo chown www-data:www-data /var/log/nginx/raot_*.log
+
+# Test configuration
+sudo nginx -t
+```
+
 #### Deployment Issues Solved
 1. Fixed database connection errors by creating PostgreSQL user with correct permissions
 2. Resolved Django "DisallowedHost" error by adding domain to ALLOWED_HOSTS
@@ -464,6 +514,121 @@ The RAOT Supplements site is now running with the following configuration:
 - Implement automated backup system for database and media files
 - Set up server monitoring and alert system
 - Create proper systemd service for Gunicorn for automatic startup
+
+### Development and Deployment Workflow
+
+#### Local Development
+1. **Start Development Server**:
+   ```bash
+   export DJANGO_SETTINGS_MODULE=raotproject.settings_dev
+   python manage.py runserver 0.0.0.0:8000
+   ```
+
+2. **Test Changes Locally**:
+   - Make code changes
+   - Test at http://localhost:8000
+   - Debug using Django Debug Toolbar
+
+#### Deployment Process
+1. **Collect Static Files**:
+   ```bash
+   python manage.py collectstatic --noinput
+   ```
+
+2. **Apply Database Changes**:
+   ```bash
+   python manage.py migrate
+   ```
+
+3. **Restart Services**:
+   ```bash
+   # Restart Gunicorn
+   ps aux | grep gunicorn
+   kill -HUP <process_id>
+
+   # Reload Nginx if needed
+   sudo systemctl reload nginx
+   ```
+
+#### Monitoring
+- Nginx logs: `sudo tail -f /var/log/nginx/error.log`
+- Django logs: `tail -f /home/raotsuplementos/htdocs/raotsuplementos.com.mx/django_error.log`
+- Debug mode: Update `settings_dev.py` with `DEBUG = True`
+
+#### Server Details
+- Production URL: www.raotsuplementos.com.mx
+- Server IP: 69.62.95.109
+- SSH access: `ssh root@69.62.95.109`
+- PostgreSQL:
+  - Database: raot_db
+  - User: admin
+  - Password: RaotSuper2025
+
+### Service Status and Monitoring
+
+#### Active Services
+- **Nginx**: Running on port 80
+  - Main PID: 304499
+  - Worker Process: Active
+  - Status: Active and running
+
+- **Gunicorn**: Running on Unix socket
+  - Socket: `/home/raotsuplementos/htdocs/raotsuplementos.com.mx/raot.sock`
+  - Workers: 3
+  - Status: Active and running
+
+#### Verification Steps
+```bash
+# Check website accessibility
+curl -I http://raotsuplementos.com.mx
+
+# Monitor logs in real-time
+sudo tail -f /var/log/nginx/raot_error.log
+sudo tail -f /var/log/nginx/raot_access.log
+sudo journalctl -u gunicorn -f
+
+# Check process status
+ps aux | grep nginx
+ps aux | grep gunicorn
+
+# Test static files
+curl -I http://raotsuplementos.com.mx/static/css/raot.css
+```
+
+#### Regular Maintenance
+```bash
+# Daily log rotation
+sudo logrotate /etc/logrotate.d/nginx
+
+# Monitor resource usage
+htop
+df -h
+free -m
+```
+
+### CloudPanel Installation (April 8, 2025)
+
+#### Installation Steps
+```bash
+# Install CloudPanel
+curl -sS https://installer.cloudpanel.io/ce/v2/install.sh -o install.sh
+chmod +x install.sh
+./install.sh
+
+# Post-installation verification
+sudo systemctl status cloudpanel
+sudo netstat -tulpn | grep 8443
+```
+
+#### Access Information
+- CloudPanel URL: https://69.62.95.109:8443
+- Default username: admin
+- Default password: [Generated during installation]
+
+#### Important Paths
+- Config directory: `/etc/cloudpanel`
+- Logs directory: `/var/log/cloudpanel`
+- Services directory: `/home/clp/services`
 
 ## Future Enhancements
 - REST API for mobile applications
